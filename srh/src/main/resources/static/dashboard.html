@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SRH – Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold:    #c9a84c;
+            --gold2:   #e8d08a;
+            --dark:    #0d0d0d;
+            --dark2:   #161616;
+            --dark3:   #1f1f1f;
+            --cream:   #f5f0e8;
+            --muted:   #888880;
+        }
+
+        body {
+            background: var(--dark);
+            color: var(--cream);
+            font-family: 'Jost', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ── Top bar ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 60px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .logo-mark {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.35em;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+        .header-time {
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 40px 60px;
+            position: relative;
+        }
+
+        /* decorative ring */
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            border: 1px solid #2a2200;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 340px; height: 340px;
+            border-radius: 50%;
+            border: 1px solid #2a2200;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .crest {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+            animation: fadeDown 0.8s ease both;
+        }
+
+        .hotel-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            letter-spacing: 0.04em;
+            color: var(--cream);
+            animation: fadeDown 0.9s ease 0.1s both;
+        }
+        .hotel-name span {
+            color: var(--gold);
+        }
+
+        .tagline {
+            margin-top: 16px;
+            font-size: 0.78rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--muted);
+            animation: fadeDown 1s ease 0.2s both;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 40px auto;
+            animation: fadeIn 1s ease 0.4s both;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 48px;
+            animation: fadeIn 1s ease 0.5s both;
+        }
+
+        /* ── Cards ── */
+        .cards {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp 1s ease 0.6s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: var(--dark2);
+            border: 1px solid #2a2a2a;
+            border-radius: 2px;
+            padding: 48px 40px;
+            width: 240px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.3s, transform 0.3s, background 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            border-color: #3a3020;
+            background: var(--dark3);
+            transform: translateY(-4px);
+        }
+        .card:hover::before { transform: scaleX(1); }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 8px;
+        }
+        .card-desc {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        .card-arrow {
+            display: inline-block;
+            margin-top: 24px;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover .card-arrow { opacity: 1; }
+
+        /* ── Stats row ── */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px 60px;
+            border-top: 1px solid #1e1e1e;
+            animation: fadeIn 1s ease 0.8s both;
+        }
+        .stat { text-align: center; }
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--gold);
+        }
+        .stat-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 24px 60px;
+            border-top: 1px solid #1e1e1e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        footer p {
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: #444;
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-mark">SRH &nbsp;·&nbsp; Reception</div>
+    <div class="header-time" id="clock"></div>
+</header>
+
+<main class="hero">
+    <div class="crest">♛</div>
+
+    <h1 class="hotel-name">
+        Serendib <span>Royal</span> Hotel
+    </h1>
+    <p class="tagline">Reception Management System</p>
+
+    <div class="divider"></div>
+    <p class="subtitle">Select an operation to continue</p>
+
+    <div class="cards">
+        <a href="checkin.html" class="card">
+            <div class="card-icon">🛎️</div>
+            <div class="card-title">Check In</div>
+            <div class="card-desc">Register arriving guests and assign rooms</div>
+            <div class="card-arrow">Enter →</div>
+        </a>
+
+        <a href="checkout.html" class="card">
+            <div class="card-icon">🗝️</div>
+            <div class="card-title">Check Out</div>
+            <div class="card-desc">Process departures and settle final bills</div>
+            <div class="card-arrow">Enter →</div>
+        </a>
+
+        <a href="#" class="card" onclick="viewRecords(); return false;">
+            <div class="card-icon">📋</div>
+            <div class="card-title">Records</div>
+            <div class="card-desc">View all check-in and check-out history</div>
+            <div class="card-arrow">Enter →</div>
+        </a>
+    </div>
+</main>
+
+<div class="stats">
+    <div class="stat">
+        <div class="stat-value" id="checkinCount">—</div>
+        <div class="stat-label">Check-Ins Today</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value" id="checkoutCount">—</div>
+        <div class="stat-label">Check-Outs Today</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value" id="keycardCount">—</div>
+        <div class="stat-label">Active Key Cards</div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2024 Serendib Royal Hotel — All rights reserved</p>
+    <p>Reception Management System v1.0</p>
+</footer>
+
+<script>
+    // Live clock
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').textContent =
+            now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
+            + '  ·  ' +
+            now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Load stats from API
+    async function loadStats() {
+        try {
+            const [ci, co, kc] = await Promise.all([
+                fetch('http://localhost:8080/checkin').then(r => r.json()),
+                fetch('http://localhost:8080/checkout').then(r => r.json()),
+                fetch('http://localhost:8080/keycard').then(r => r.json())
+            ]);
+            document.getElementById('checkinCount').textContent  = ci.count  ?? 0;
+            document.getElementById('checkoutCount').textContent = co.count  ?? 0;
+            const active = (kc.data || []).filter(k => k.active).length;
+            document.getElementById('keycardCount').textContent  = active;
+        } catch {
+            document.getElementById('checkinCount').textContent  = '0';
+            document.getElementById('checkoutCount').textContent = '0';
+            document.getElementById('keycardCount').textContent  = '0';
+        }
+    }
+    loadStats();
+
+    function viewRecords() {
+        alert('Records viewer — connect to GET /checkin and GET /checkout endpoints.');
+    }
+</script>
+
+</body>
+</html>
