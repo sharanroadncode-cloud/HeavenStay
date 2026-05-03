@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Haven Stay - Records</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #F2F2F2; color: #2C3E50; font-family: Arial, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: #FFFFFF; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2C3E50; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #2C3E50; }
+        .logo span { color: #3498DB; }
+        .back { font-size: 0.85rem; color: #3498DB; text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+        .page-header { padding: 36px 40px 0; }
+        .page-label { font-size: 0.75rem; color: #3498DB; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+        .page-title { font-size: 1.8rem; font-weight: bold; color: #2C3E50; margin-bottom: 4px; }
+        .page-sub { font-size: 0.85rem; color: #888; }
+        .divider { height: 3px; background: #3498DB; width: 40px; margin: 16px 0 0; border-radius: 2px; }
+        .tabs { display: flex; padding: 0 40px; border-bottom: 2px solid #e0e0e0; margin-top: 32px; background: #FFFFFF; }
+        .tab-btn { padding: 14px 24px; font-size: 0.82rem; font-weight: bold; color: #888; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; margin-bottom: -2px; transition: color 0.2s; }
+        .tab-btn:hover { color: #2C3E50; }
+        .tab-btn.active { color: #3498DB; border-bottom-color: #3498DB; }
+        .content { flex: 1; padding: 32px 40px; }
+        .stats-strip { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-card { background: #FFFFFF; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px 24px; min-width: 140px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: #3498DB; }
+        .stat-label { font-size: 0.68rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+        .search-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+        .search-input { padding: 10px 14px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85rem; color: #2C3E50; background: #FFFFFF; outline: none; width: 320px; }
+        .search-input:focus { border-color: #3498DB; }
+        .refresh-btn { padding: 10px 18px; background: #3498DB; color: #fff; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+        .refresh-btn:hover { background: #2980b9; }
+        .table-wrapper { background: #FFFFFF; border: 1px solid #e0e0e0; border-radius: 6px; overflow-x: auto; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        thead tr { background: #2C3E50; }
+        thead th { padding: 14px 16px; text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #FFFFFF; font-weight: bold; }
+        tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f8f9fa; }
+        tbody td { padding: 13px 16px; color: #2C3E50; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; text-transform: uppercase; }
+        .badge-green { background: #eafaf1; border: 1px solid #27ae60; color: #1e8449; }
+        .badge-red { background: #fdf2f2; border: 1px solid #e74c3c; color: #c0392b; }
+        .badge-blue { background: #eaf4fb; border: 1px solid #3498DB; color: #2471a3; }
+        .id-cell { font-weight: bold; color: #3498DB; font-size: 0.8rem; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .empty { text-align: center; padding: 48px; color: #aaa; font-size: 0.85rem; }
+        footer { background: #2C3E50; color: #aaa; padding: 16px 40px; display: flex; justify-content: space-between; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Haven <span>Stay</span></div>
+    <a href="dashboard.html" class="back">← Back to Dashboard</a>
+</header>
+
+<div class="page-header">
+    <p class="page-label">Reception Management</p>
+    <h1 class="page-title">All Records</h1>
+    <p class="page-sub">View all check-ins, check-outs and key-cards</p>
+    <div class="divider"></div>
+</div>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('checkins')">🛎 Check-Ins</button>
+    <button class="tab-btn" onclick="switchTab('checkouts')">🗝 Check-Outs</button>
+    <button class="tab-btn" onclick="switchTab('keycards')">💳 Key Cards</button>
+</div>
+
+<div class="content">
+
+    <div class="tab-panel active" id="panel-checkins">
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" id="ci-total">—</div>
+                <div class="stat-label">Total Check-Ins</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" placeholder="Search by ID, Guest, Room..." oninput="filterTable('ci-table', this.value)"/>
+            <button class="refresh-btn" onclick="loadAll()">⟳ Refresh</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="ci-table">
+                <thead>
+                <tr>
+                    <th>Check-In ID</th>
+                    <th>Booking ID</th>
+                    <th>Guest ID</th>
+                    <th>Staff ID</th>
+                    <th>Room</th>
+                    <th>Arrival Time</th>
+                    <th>Key Card</th>
+                </tr>
+                </thead>
+                <tbody id="ci-body"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-checkouts">
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" id="co-total">—</div>
+                <div class="stat-label">Total Check-Outs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="co-revenue">—</div>
+                <div class="stat-label">Total Revenue (LKR)</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" placeholder="Search by ID, Guest..." oninput="filterTable('co-table', this.value)"/>
+            <button class="refresh-btn" onclick="loadAll()">⟳ Refresh</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="co-table">
+                <thead>
+                <tr>
+                    <th>Check-Out ID</th>
+                    <th>Booking ID</th>
+                    <th>Guest ID</th>
+                    <th>Staff ID</th>
+                    <th>Departure Time</th>
+                    <th>Outstanding (LKR)</th>
+                    <th>Final Total (LKR)</th>
+                </tr>
+                </thead>
+                <tbody id="co-body"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-keycards">
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" id="kc-total">—</div>
+                <div class="stat-label">Total Cards</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="kc-active">—</div>
+                <div class="stat-label">Active Cards</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" placeholder="Search by Card ID, Room, Guest..." oninput="filterTable('kc-table', this.value)"/>
+            <button class="refresh-btn" onclick="loadAll()">⟳ Refresh</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="kc-table">
+                <thead>
+                <tr>
+                    <th>Card ID</th>
+                    <th>Room ID</th>
+                    <th>Guest ID</th>
+                    <th>Status</th>
+                    <th>Issued Date</th>
+                    <th>Expiry Date</th>
+                </tr>
+                </thead>
+                <tbody id="kc-body"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <span>© 2024 Haven Stay Hotel</span>
+    <span id="last-updated">Last updated: —</span>
+</footer>
+
+<script>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', ['checkins','checkouts','keycards'][i] === tab);
+        });
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + tab).classList.add('active');
+    }
+
+    async function loadAll() {
+        await Promise.all([loadCheckIns(), loadCheckOuts(), loadKeyCards()]);
+        document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+    }
+
+    async function loadCheckIns() {
+        const tbody = document.getElementById('ci-body');
+        try {
+            const res = await fetch('http://localhost:8080/checkin');
+            const data = await res.json();
+            const rows = data.data || [];
+            document.getElementById('ci-total').textContent = rows.length;
+            if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No check-in records found.</td></tr>'; return; }
+            tbody.innerHTML = [...rows].reverse().map(ci => `
+                <tr>
+                    <td class="id-cell">${ci.checkInId}</td>
+                    <td>${ci.bookingId}</td>
+                    <td>${ci.guestId}</td>
+                    <td>${ci.staffId}</td>
+                    <td><span class="badge badge-blue">Room ${ci.roomAssigned}</span></td>
+                    <td style="color:#888;font-size:0.8rem">${ci.actualArrival}</td>
+                    <td style="color:#aaa;font-size:0.78rem">${ci.keyCardId}</td>
+                </tr>`).join('');
+        } catch {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty" style="color:#e74c3c">⚠️ Cannot connect to server.</td></tr>';
+        }
+    }
+
+    async function loadCheckOuts() {
+        const tbody = document.getElementById('co-body');
+        try {
+            const res = await fetch('http://localhost:8080/checkout');
+            const data = await res.json();
+            const rows = data.data || [];
+            document.getElementById('co-total').textContent = rows.length;
+            document.getElementById('co-revenue').textContent = rows.reduce((s, r) => s + r.finalTotal, 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No check-out records found.</td></tr>'; return; }
+            tbody.innerHTML = [...rows].reverse().map(co => `
+                <tr>
+                    <td class="id-cell">${co.checkOutId}</td>
+                    <td>${co.bookingId}</td>
+                    <td>${co.guestId}</td>
+                    <td>${co.staffId}</td>
+                    <td style="color:#888;font-size:0.8rem">${co.actualDeparture}</td>
+                    <td>${co.outstandingCharges.toFixed(2)}</td>
+                    <td><span class="badge badge-green">LKR ${co.finalTotal.toFixed(2)}</span></td>
+                </tr>`).join('');
+        } catch {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty" style="color:#e74c3c">⚠️ Cannot connect to server.</td></tr>';
+        }
+    }
+
+    async function loadKeyCards() {
+        const tbody = document.getElementById('kc-body');
+        try {
+            const res = await fetch('http://localhost:8080/keycard');
+            const data = await res.json();
+            const rows = data.data || [];
+            document.getElementById('kc-total').textContent = rows.length;
+            document.getElementById('kc-active').textContent = rows.filter(k => k.active).length;
+            if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty">No key-card records found.</td></tr>'; return; }
+            tbody.innerHTML = [...rows].reverse().map(kc => `
+                <tr>
+                    <td class="id-cell">${kc.cardId}</td>
+                    <td><span class="badge badge-blue">Room ${kc.roomId}</span></td>
+                    <td>${kc.guestId}</td>
+                    <td><span class="badge ${kc.active ? 'badge-green' : 'badge-red'}">${kc.active ? 'Active' : 'Inactive'}</span></td>
+                    <td style="color:#888;font-size:0.8rem">${kc.issuedDate}</td>
+                    <td style="color:#888;font-size:0.8rem">${kc.expiryDate}</td>
+                </tr>`).join('');
+        } catch {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty" style="color:#e74c3c">⚠️ Cannot connect to server.</td></tr>';
+        }
+    }
+
+    function filterTable(tableId, query) {
+        const q = query.toLowerCase();
+        document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
+    loadAll();
+    setInterval(loadAll, 30000);
+</script>
+
+</body>
+</html>

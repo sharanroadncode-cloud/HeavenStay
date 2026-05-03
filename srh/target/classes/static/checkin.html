@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Haven Stay - Check In</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #F2F2F2; color: #2C3E50; font-family: Arial, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: #FFFFFF; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2C3E50; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #2C3E50; }
+        .logo span { color: #3498DB; }
+        .back { font-size: 0.85rem; color: #3498DB; text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+        main { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 48px 20px; gap: 32px; flex-wrap: wrap; }
+        .form-box { background: #FFFFFF; border-radius: 8px; padding: 40px; width: 100%; max-width: 480px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e0e0e0; }
+        .page-label { font-size: 0.75rem; color: #3498DB; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+        .page-title { font-size: 1.8rem; font-weight: bold; color: #2C3E50; margin-bottom: 6px; }
+        .page-sub { font-size: 0.85rem; color: #888; margin-bottom: 32px; }
+        .divider { height: 3px; background: #3498DB; width: 40px; margin-bottom: 32px; border-radius: 2px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.78rem; font-weight: bold; color: #2C3E50; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        input { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; color: #2C3E50; background: #FFFFFF; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: #3498DB; }
+        .btn-submit { width: 100%; padding: 14px; background: #3498DB; color: #fff; border: none; border-radius: 4px; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+        .btn-submit:hover { background: #2980b9; }
+        .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+        .msg { margin-top: 20px; padding: 14px 16px; border-radius: 4px; font-size: 0.85rem; display: none; }
+        .msg.success { display: block; background: #eafaf1; border: 1px solid #27ae60; color: #1e8449; }
+        .msg.error { display: block; background: #fdf2f2; border: 1px solid #e74c3c; color: #c0392b; }
+        .recent-box { background: #FFFFFF; border-radius: 8px; padding: 32px; width: 100%; max-width: 480px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e0e0e0; }
+        .recent-title { font-size: 0.78rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 16px; }
+        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .record-item:last-child { border-bottom: none; }
+        .record-id { font-size: 0.8rem; font-weight: bold; color: #3498DB; }
+        .record-info { font-size: 0.75rem; color: #888; margin-top: 2px; }
+        .room-badge { background: #2C3E50; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 0.72rem; }
+        footer { background: #2C3E50; color: #aaa; padding: 16px 40px; display: flex; justify-content: space-between; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Haven <span>Stay</span></div>
+    <a href="dashboard.html" class="back">← Back to Dashboard</a>
+</header>
+
+<main>
+    <div class="form-box">
+        <p class="page-label">Reception Desk</p>
+        <h1 class="page-title">Guest Check-In</h1>
+        <p class="page-sub">Complete the form to register a new arrival</p>
+        <div class="divider"></div>
+
+        <form id="checkinForm" onsubmit="submitCheckIn(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bookingId">Booking ID</label>
+                    <input type="text" id="bookingId" placeholder="e.g. BK001" required/>
+                </div>
+                <div class="form-group">
+                    <label for="guestId">Guest ID</label>
+                    <input type="text" id="guestId" placeholder="e.g. G001" required/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="staffId">Staff ID</label>
+                    <input type="text" id="staffId" placeholder="e.g. S001" required/>
+                </div>
+                <div class="form-group">
+                    <label for="roomAssigned">Room Number</label>
+                    <input type="text" id="roomAssigned" placeholder="e.g. 101" required/>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">Confirm Check-In</button>
+        </form>
+
+        <div class="msg" id="msg"></div>
+    </div>
+
+    <div class="recent-box">
+        <div class="recent-title">Recent Check-Ins</div>
+        <div id="recentList"><p style="color:#aaa;font-size:0.82rem;">Loading...</p></div>
+    </div>
+</main>
+
+<footer>
+    <span>© 2024 Haven Stay Hotel</span>
+    <span>Reception Management System</span>
+</footer>
+
+<script>
+    async function submitCheckIn(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const msg = document.getElementById('msg');
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+        msg.className = 'msg';
+
+        const payload = {
+            bookingId: document.getElementById('bookingId').value.trim(),
+            guestId: document.getElementById('guestId').value.trim(),
+            staffId: document.getElementById('staffId').value.trim(),
+            roomAssigned: document.getElementById('roomAssigned').value.trim()
+        };
+
+        try {
+            const res = await fetch('http://localhost:8080/checkin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.success) {
+                msg.className = 'msg success';
+                msg.textContent = 'Check-in successful! ID: ' + data.data.checkInId + ' | Key Card: ' + data.data.keyCardId;
+                document.getElementById('checkinForm').reset();
+                loadRecent();
+            } else {
+                msg.className = 'msg error';
+                msg.textContent = data.message;
+            }
+        } catch {
+            msg.className = 'msg error';
+            msg.textContent = 'Cannot connect to server. Make sure Spring Boot is running on port 8080.';
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Confirm Check-In';
+    }
+
+    async function loadRecent() {
+        try {
+            const res = await fetch('http://localhost:8080/checkin');
+            const data = await res.json();
+            const list = document.getElementById('recentList');
+            const rows = (data.data || []).reverse().slice(0, 5);
+            if (rows.length === 0) { list.innerHTML = '<p style="color:#aaa;font-size:0.82rem;">No check-ins yet.</p>'; return; }
+            list.innerHTML = rows.map(ci => `
+                <div class="record-item">
+                    <div>
+                        <div class="record-id">${ci.checkInId}</div>
+                        <div class="record-info">Guest: ${ci.guestId} · ${ci.actualArrival}</div>
+                    </div>
+                    <div class="room-badge">Room ${ci.roomAssigned}</div>
+                </div>`).join('');
+        } catch {
+            document.getElementById('recentList').innerHTML = '<p style="color:#aaa;font-size:0.82rem;">Server offline.</p>';
+        }
+    }
+
+    loadRecent();
+</script>
+
+</body>
+</html>
