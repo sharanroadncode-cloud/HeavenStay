@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Haven Stay - Reception</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #F5F1E8; color: #2B2B2B; font-family: Georgia, serif; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: #1F3D36; padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6rem; color: #C8A96A; letter-spacing: 0.05em; }
+        .logo span { color: #fff; font-size: 0.9rem; font-family: Arial, sans-serif; display: block; letter-spacing: 0.2em; margin-top: 2px; }
+        .clock { font-family: Arial, sans-serif; font-size: 0.82rem; color: #a0b8a8; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; }
+        .welcome { text-align: center; margin-bottom: 52px; }
+        .welcome h1 { font-size: 2.6rem; color: #1F3D36; font-weight: normal; margin-bottom: 8px; }
+        .welcome p { font-size: 0.95rem; color: #666; font-family: Arial, sans-serif; }
+        .gold-line { width: 60px; height: 2px; background: #C8A96A; margin: 16px auto 0; }
+        .cards { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+        .card { background: #fff; border-radius: 4px; padding: 40px 32px; width: 220px; text-align: center; text-decoration: none; color: #2B2B2B; border: 1px solid #e0d8c8; border-bottom: 3px solid #C8A96A; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(31,61,54,0.12); }
+        .card-icon { font-size: 2rem; margin-bottom: 16px; }
+        .card-title { font-size: 1.1rem; color: #1F3D36; margin-bottom: 8px; }
+        .card-desc { font-size: 0.78rem; color: #888; font-family: Arial, sans-serif; line-height: 1.5; }
+        .card-link { display: inline-block; margin-top: 20px; padding: 7px 20px; background: #1F3D36; color: #C8A96A; font-family: Arial, sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; border-radius: 2px; }
+        .stats { display: flex; gap: 48px; justify-content: center; padding: 32px 48px; background: #1F3D36; margin-top: auto; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2rem; color: #C8A96A; }
+        .stat-label { font-size: 0.7rem; color: #a0b8a8; font-family: Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 4px; }
+        footer { background: #162d28; color: #5a7a6a; padding: 14px 48px; display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.72rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Haven Stay <span>RECEPTION MANAGEMENT</span></div>
+    <div class="clock" id="clock"></div>
+</header>
+
+<main>
+    <div class="welcome">
+        <h1>Welcome to Reception</h1>
+        <p>Manage guest arrivals, departures and room key cards</p>
+        <div class="gold-line"></div>
+    </div>
+
+    <div class="cards">
+        <a href="checkin.html" class="card">
+            <div class="card-icon">🛎️</div>
+            <div class="card-title">Guest Check-In</div>
+            <div class="card-desc">Register arriving guests and assign room key cards</div>
+            <div class="card-link">Open →</div>
+        </a>
+        <a href="checkout.html" class="card">
+            <div class="card-icon">🗝️</div>
+            <div class="card-title">Guest Check-Out</div>
+            <div class="card-desc">Process departures and generate final bill</div>
+            <div class="card-link">Open →</div>
+        </a>
+        <a href="records.html" class="card">
+            <div class="card-icon">📋</div>
+            <div class="card-title">View Records</div>
+            <div class="card-desc">Browse all check-ins, check-outs and key cards</div>
+            <div class="card-link">Open →</div>
+        </a>
+    </div>
+</main>
+
+<div class="stats">
+    <div class="stat">
+        <div class="stat-value" id="ciCount">0</div>
+        <div class="stat-label">Total Check-Ins</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value" id="coCount">0</div>
+        <div class="stat-label">Total Check-Outs</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value" id="kcCount">0</div>
+        <div class="stat-label">Active Key Cards</div>
+    </div>
+</div>
+
+<footer>
+    <span>© 2024 Haven Stay Hotel</span>
+    <span>Reception Management System v1.0</span>
+</footer>
+
+<script>
+    function updateClock() {
+        document.getElementById('clock').textContent = new Date().toLocaleString();
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    async function loadStats() {
+        try {
+            const [ci, co, kc] = await Promise.all([
+                fetch('http://localhost:8080/checkin').then(r => r.json()),
+                fetch('http://localhost:8080/checkout').then(r => r.json()),
+                fetch('http://localhost:8080/keycard').then(r => r.json())
+            ]);
+            document.getElementById('ciCount').textContent = ci.count || 0;
+            document.getElementById('coCount').textContent = co.count || 0;
+            document.getElementById('kcCount').textContent = (kc.data || []).filter(k => k.active).length;
+        } catch (e) {
+            console.log('Server not running');
+        }
+    }
+    loadStats();
+</script>
+
+</body>
+</html>
