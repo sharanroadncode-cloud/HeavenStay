@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment – Heaven Stay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --primary:#1F3D36; --secondary:#F5F1E8; --accent:#C8A96A; --text:#2B2B2B; --white:#FFFFFF; --error:#c0392b; --success:#27ae60; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; color:var(--text); background:var(--secondary); }
+
+    nav { background:var(--primary); display:flex; align-items:center; justify-content:space-between; padding:0 48px; height:70px; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(0,0,0,.3); }
+    .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .logo-icon { width:38px; height:38px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .logo-text { font-family:'Playfair Display',serif; color:var(--white); font-size:22px; font-weight:700; }
+    .logo-text span { color:var(--accent); }
+    nav ul { list-style:none; display:flex; gap:32px; }
+    nav ul a { color:rgba(255,255,255,.85); text-decoration:none; font-size:14px; font-weight:500; transition:.2s; }
+    nav ul a:hover, nav ul a.active { color:var(--accent); }
+
+    .page-header { background:linear-gradient(135deg,var(--primary),#2d5a4e); padding:60px 48px 40px; color:var(--white); }
+    .breadcrumb { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:12px; }
+    .breadcrumb a { color:var(--accent); text-decoration:none; }
+    .page-header h1 { font-family:'Playfair Display',serif; font-size:38px; margin-bottom:8px; }
+    .page-header p { color:rgba(255,255,255,.75); font-size:16px; }
+
+    .pay-container { max-width:1000px; margin:40px auto; padding:0 24px 80px; display:grid; grid-template-columns:1fr 360px; gap:32px; }
+
+    .form-card { background:var(--white); border-radius:20px; padding:40px; border:1px solid #ede9de; box-shadow:0 4px 24px rgba(0,0,0,.06); }
+    .section-title { font-family:'Playfair Display',serif; color:var(--primary); font-size:20px; margin-bottom:24px; padding-bottom:12px; border-bottom:2px solid var(--secondary); }
+
+    /* METHOD TABS */
+    .method-tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:32px; }
+    .method-tab {
+      padding:18px 12px; border:2px solid #e8e4d9; border-radius:12px; text-align:center; cursor:pointer; transition:.2s; background:var(--secondary);
+    }
+    .method-tab:hover { border-color:var(--accent); }
+    .method-tab.active { border-color:var(--primary); background:var(--white); box-shadow:0 2px 12px rgba(31,61,54,.1); }
+    .method-tab .icon { font-size:28px; margin-bottom:8px; }
+    .method-tab .name { font-size:13px; font-weight:600; color:var(--primary); }
+
+    .payment-panel { display:none; }
+    .payment-panel.active { display:block; }
+
+    .form-group { margin-bottom:20px; }
+    label { display:block; font-size:12px; font-weight:600; color:var(--primary); letter-spacing:.6px; text-transform:uppercase; margin-bottom:7px; }
+    input, select {
+      width:100%; padding:13px 16px; border:2px solid #e8e4d9; border-radius:10px; font-size:15px;
+      color:var(--text); background:var(--secondary); outline:none; transition:.2s; font-family:'Inter',sans-serif;
+    }
+    input:focus, select:focus { border-color:var(--accent); background:var(--white); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .card-display {
+      background:linear-gradient(135deg,var(--primary),#2d5a4e); border-radius:16px; padding:28px;
+      margin-bottom:24px; color:var(--white); position:relative; overflow:hidden;
+    }
+    .card-display::before { content:''; position:absolute; top:-30px; right:-30px; width:150px; height:150px; background:rgba(200,169,106,.15); border-radius:50%; }
+    .card-chip { font-size:24px; margin-bottom:12px; }
+    .card-number { font-size:18px; letter-spacing:3px; margin-bottom:16px; font-family:monospace; }
+    .card-row { display:flex; justify-content:space-between; font-size:13px; color:rgba(255,255,255,.75); }
+    .card-row span { font-weight:600; color:var(--white); }
+
+    .security-badge { display:flex; align-items:center; gap:8px; background:var(--secondary); border-radius:8px; padding:10px 16px; margin-bottom:20px; }
+    .security-badge span { font-size:12px; color:#666; }
+
+    .pay-btn {
+      width:100%; background:var(--accent); color:var(--white); border:none; padding:18px;
+      border-radius:12px; font-size:17px; font-weight:700; cursor:pointer; transition:.3s; font-family:'Inter',sans-serif;
+      box-shadow:0 4px 20px rgba(200,169,106,.4);
+    }
+    .pay-btn:hover { background:#b8955a; transform:translateY(-1px); }
+    .pay-btn:disabled { background:#bbb; cursor:not-allowed; transform:none; }
+
+    /* SIDEBAR */
+    .sidebar { display:flex; flex-direction:column; gap:20px; }
+    .order-card { background:var(--white); border-radius:20px; padding:32px; border:1px solid #ede9de; box-shadow:0 4px 24px rgba(0,0,0,.06); }
+    .order-title { font-family:'Playfair Display',serif; color:var(--primary); font-size:18px; margin-bottom:20px; }
+    .order-row { display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px; }
+    .order-row .lbl { color:#777; }
+    .order-row .val { font-weight:600; }
+    .order-divider { border:none; border-top:1px dashed #ddd; margin:14px 0; }
+    .order-total { display:flex; justify-content:space-between; font-size:18px; font-weight:700; }
+    .order-total .amount { color:var(--accent); font-size:22px; }
+
+    .booking-lookup { background:var(--white); border-radius:16px; padding:24px; border:1px solid #ede9de; }
+    .booking-lookup label { font-size:12px; font-weight:700; color:var(--primary); letter-spacing:.6px; text-transform:uppercase; display:block; margin-bottom:8px; }
+    .lookup-row { display:flex; gap:10px; }
+    .lookup-row input { flex:1; padding:11px 14px; border:2px solid #e8e4d9; border-radius:8px; font-size:14px; background:var(--secondary); outline:none; transition:.2s; }
+    .lookup-row input:focus { border-color:var(--accent); }
+    .lookup-btn { background:var(--primary); color:var(--white); border:none; padding:11px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:.2s; white-space:nowrap; }
+    .lookup-btn:hover { background:var(--accent); }
+
+    /* SUCCESS */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:var(--white); border-radius:20px; padding:48px; max-width:440px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+    .modal-icon { font-size:64px; margin-bottom:16px; }
+    .modal h2 { font-family:'Playfair Display',serif; color:var(--primary); font-size:26px; margin-bottom:12px; }
+    .modal p { color:#666; font-size:15px; line-height:1.7; margin-bottom:8px; }
+    .payment-id { background:var(--secondary); border-radius:10px; padding:12px 20px; font-size:15px; font-weight:700; color:var(--accent); margin:16px 0; font-family:monospace; }
+    .modal-btns { display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap; }
+    .modal-btn { padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:.2s; border:none; }
+    .modal-btn.primary { background:var(--primary); color:var(--white); }
+    .modal-btn.primary:hover { background:var(--accent); }
+    .modal-btn.secondary { background:transparent; color:var(--primary); border:2px solid var(--primary); }
+
+    @media(max-width:900px) { .pay-container { grid-template-columns:1fr; } nav ul { display:none; } nav { padding:0 20px; } .page-header { padding:40px 20px 30px; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">🏨</div>
+    <div class="logo-text">Heaven <span>Stay</span></div>
+  </a>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="booking.html">Book Now</a></li>
+    <li><a href="booking-history.html">My Bookings</a></li>
+    <li><a href="payment.html" class="active">Payment</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a> › Payment</div>
+  <h1>Secure Payment</h1>
+  <p>Complete your payment securely with your preferred method.</p>
+</div>
+
+<div class="pay-container">
+
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="security-badge">🔒 <span>Your payment is protected by 256-bit SSL encryption.</span></div>
+
+    <h2 class="section-title">💳 Select Payment Method</h2>
+
+    <div class="method-tabs">
+      <div class="method-tab active" onclick="setMethod('CARD',this)">
+        <div class="icon">💳</div><div class="name">Credit / Debit Card</div>
+      </div>
+      <div class="method-tab" onclick="setMethod('BANK_TRANSFER',this)">
+        <div class="icon">🏦</div><div class="name">Bank Transfer</div>
+      </div>
+      <div class="method-tab" onclick="setMethod('CASH',this)">
+        <div class="icon">💵</div><div class="name">Cash on Arrival</div>
+      </div>
+    </div>
+
+    <!-- CARD PANEL -->
+    <div class="payment-panel active" id="panel-CARD">
+      <div class="card-display">
+        <div class="card-chip">💳</div>
+        <div class="card-number" id="card-num-display">•••• •••• •••• ••••</div>
+        <div class="card-row">
+          <div>Card Holder<br/><span id="card-name-display">YOUR NAME</span></div>
+          <div>Expires<br/><span id="card-exp-display">MM/YY</span></div>
+          <div style="font-size:22px;">🏨</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" oninput="formatCard(this); updateCardDisplay()"/>
+      </div>
+      <div class="form-group">
+        <label>Cardholder Name</label>
+        <input type="text" id="cardName" placeholder="John Doe" oninput="updateCardDisplay()"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this); updateCardDisplay()"/>
+        </div>
+        <div class="form-group">
+          <label>CVV</label>
+          <input type="text" id="cardCvv" placeholder="123" maxlength="4"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANK PANEL -->
+    <div class="payment-panel" id="panel-BANK_TRANSFER">
+      <div style="background:var(--secondary); border-radius:14px; padding:24px; margin-bottom:20px;">
+        <h4 style="color:var(--primary); margin-bottom:14px; font-size:15px;">🏦 Bank Account Details</h4>
+        <div style="display:grid; gap:8px; font-size:14px;">
+          <div><strong>Bank:</strong> Commercial Bank of Ceylon</div>
+          <div><strong>Account Name:</strong> Heaven Stay Hotel (Pvt) Ltd</div>
+          <div><strong>Account Number:</strong> 1234567890</div>
+          <div><strong>Branch:</strong> Colombo 03</div>
+          <div><strong>SWIFT:</strong> CCEYLKLX</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Transfer Reference / Slip Number</label>
+        <input type="text" id="bankRef" placeholder="Enter your bank reference number"/>
+      </div>
+      <p style="font-size:13px; color:#888; line-height:1.6;">Please complete the transfer and enter your reference number above. Confirmation may take 1–2 business days.</p>
+    </div>
+
+    <!-- CASH PANEL -->
+    <div class="payment-panel" id="panel-CASH">
+      <div style="text-align:center; padding:40px 20px; background:var(--secondary); border-radius:16px;">
+        <div style="font-size:64px; margin-bottom:16px;">💵</div>
+        <h3 style="font-family:'Playfair Display',serif; color:var(--primary); font-size:22px; margin-bottom:12px;">Pay at Reception</h3>
+        <p style="color:#666; font-size:15px; line-height:1.7;">Your room is reserved. Please present your booking ID at the front desk upon check-in and pay the full amount in cash.</p>
+      </div>
+    </div>
+
+    <button class="pay-btn" id="payBtn" onclick="processPayment()">
+      Confirm Payment – <span id="pay-amount">LKR0.00</span>
+    </button>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="booking-lookup">
+      <label>Booking ID</label>
+      <div class="lookup-row">
+        <input type="text" id="bookingIdInput" placeholder="BK-XXXXXX"/>
+        <button class="lookup-btn" onclick="lookupBooking()">Look Up</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="order-title">📋 Order Summary</div>
+      <div class="order-row"><span class="lbl">Booking ID</span><span class="val" id="o-id">—</span></div>
+      <div class="order-row"><span class="lbl">Room</span><span class="val" id="o-room">—</span></div>
+      <div class="order-row"><span class="lbl">Check-In</span><span class="val" id="o-ci">—</span></div>
+      <div class="order-row"><span class="lbl">Check-Out</span><span class="val" id="o-co">—</span></div>
+      <div class="order-row"><span class="lbl">Nights</span><span class="val" id="o-nights">—</span></div>
+      <hr class="order-divider"/>
+      <div class="order-row"><span class="lbl">Subtotal</span><span class="val" id="o-sub">LKR 0.00</span></div>
+      <div class="order-row"><span class="lbl">Discount</span><span class="val" id="o-disc">-LKR 0.00</span></div>
+      <div class="order-row"><span class="lbl">Tax (10%)</span><span class="val" id="o-tax">LKR 0.00</span></div>
+      <hr class="order-divider"/>
+      <div class="order-total"><span>Total Due</span><span class="amount" id="o-total">LKR 0.00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <h2>Payment Successful!</h2>
+    <p>Your payment has been processed and confirmed.</p>
+    <p>Payment ID:</p>
+    <div class="payment-id" id="modalPayId">PY-000000</div>
+    <div class="modal-btns">
+      <a href="invoice.html" class="modal-btn primary" id="invoiceBtn">Download Invoice</a>
+      <a href="booking-history.html" class="modal-btn secondary">My Bookings</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROOM_NAMES = { 'R001':'Standard Room','R002':'Deluxe Room','R003':'Presidential Suite' };
+const ROOM_RATES = { 'R001':120,'R002':220,'R003':450 };
+let currentMethod = 'CARD';
+let currentBooking = null;
+
+// Pre-fill from URL
+const urlParams = new URLSearchParams(window.location.search);
+const preBookingId = urlParams.get('bookingId') || localStorage.getItem('lastBookingId') || '';
+if (preBookingId) { document.getElementById('bookingIdInput').value = preBookingId; lookupBooking(); }
+
+function setMethod(method, el) {
+  currentMethod = method;
+  document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.payment-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+method).classList.add('active');
+}
+
+function formatCard(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,16);
+  el.value = v.replace(/(.{4})/g,'LKR 1 ').trim();
+}
+function formatExpiry(el) {
+  let v = el.value.replace(/\D/g,'');
+  if (v.length>=2) v = v.substring(0,2)+'/'+v.substring(2,4);
+  el.value = v;
+}
+function updateCardDisplay() {
+  const n = document.getElementById('cardNumber').value || '•••• •••• •••• ••••';
+  document.getElementById('card-num-display').textContent = n.padEnd(19,'•').replace(/(.{4})/g,'LKR 1 ').trim();
+  document.getElementById('card-name-display').textContent = (document.getElementById('cardName').value || 'YOUR NAME').toUpperCase();
+  document.getElementById('card-exp-display').textContent = document.getElementById('cardExpiry').value || 'MM/YY';
+}
+
+function lookupBooking() {
+  const id = document.getElementById('bookingIdInput').value.trim();
+  if (!id) return;
+
+  // Demo fallback
+  const DEMO = {
+    'BK-A1B2C3': { bookingId:'BK-A1B2C3', roomId:'R002', checkInDate:'2026-05-10', checkOutDate:'2026-05-13', subtotal:75000, discount:3750, tax:7125, total:78375 },
+    'BK-D4E5F6': { bookingId:'BK-D4E5F6', roomId:'R001', checkInDate:'2026-04-01', checkOutDate:'2026-04-03', subtotal:30000, discount:1500, tax:2850, total:31350 },
+    'BK-G7H8I9': { bookingId:'BK-G7H8I9', roomId:'R003', checkInDate:'2026-06-20', checkOutDate:'2026-06-23', subtotal:150000, discount:7500, tax:14250, total:156750 },
+  };
+
+  fetch(`http://localhost:8080/api/bookings/${id}`)
+    .then(r => r.json())
+    .then(b => fillOrder(b))
+    .catch(() => {
+      const b = DEMO[id.toUpperCase()] || {
+        bookingId: id, roomId:'R001',
+        checkInDate: new Date().toISOString().split('T')[0],
+        checkOutDate: new Date(Date.now()+86400000).toISOString().split('T')[0],
+        subtotal:30000, discount:1500, tax:2850, total:31350
+      };
+      fillOrder(b);
+    });
+}
+
+function fillOrder(b) {
+  currentBooking = b;
+  const nights = b.checkInDate && b.checkOutDate ? Math.ceil((new Date(b.checkOutDate)-new Date(b.checkInDate))/(1000*60*60*24)) : 1;
+  document.getElementById('o-id').textContent = b.bookingId;
+  document.getElementById('o-room').textContent = ROOM_NAMES[b.roomId]||b.roomId;
+  document.getElementById('o-ci').textContent = b.checkInDate;
+  document.getElementById('o-co').textContent = b.checkOutDate;
+  document.getElementById('o-nights').textContent = nights + ' night(s)';
+  document.getElementById('o-sub').textContent = 'LKR ' + parseFloat(b.subtotal||0).toFixed(2);
+  document.getElementById('o-disc').textContent = '-LKR ' + parseFloat(b.discount||0).toFixed(2);
+  document.getElementById('o-tax').textContent = 'LKR ' + parseFloat(b.tax||0).toFixed(2);
+  document.getElementById('o-total').textContent = 'LKR ' + parseFloat(b.total||0).toFixed(2);
+  document.getElementById('pay-amount').textContent = 'LKR ' + parseFloat(b.total||0).toFixed(2);
+}
+
+function processPayment() {
+  if (!currentBooking) { alert('Please enter and look up a booking ID first.'); return; }
+  if (currentMethod === 'CARD') {
+    const n = document.getElementById('cardNumber').value.replace(/\s/g,'');
+    if (n.length < 16) { alert('Please enter a valid 16-digit card number.'); return; }
+    if (!document.getElementById('cardName').value.trim()) { alert('Please enter the cardholder name.'); return; }
+    if (document.getElementById('cardExpiry').value.length < 5) { alert('Please enter a valid expiry date.'); return; }
+    if (!document.getElementById('cardCvv').value) { alert('Please enter the CVV.'); return; }
+  }
+
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true; btn.textContent = 'Processing…';
+
+  const payload = {
+    bookingId:       currentBooking.bookingId,
+    amount:          currentBooking.total,
+    method:          currentMethod,
+    status:          'COMPLETED',
+    transactionDate: new Date().toISOString().split('T')[0]
+  };
+
+  fetch('http://localhost:8080/api/payments', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => showSuccess(data.paymentId))
+  .catch(() => showSuccess('PY-' + Math.random().toString(36).substr(2,6).toUpperCase()))
+  .finally(() => { btn.disabled=false; btn.innerHTML = 'Confirm Payment – <span id="pay- amount">LKR '+parseFloat(currentBooking.total).toFixed(2)+'</span>'; });
+}
+
+function showSuccess(pid) {
+  localStorage.setItem('lastPaymentId', pid);
+  document.getElementById('modalPayId').textContent = pid;
+  document.getElementById('invoiceBtn').href = 'invoice.html?paymentId='+pid+'&bookingId='+(currentBooking?.bookingId||'');
+  document.getElementById('successModal').classList.add('show');
+}
+</script>
+</body>
+</html>

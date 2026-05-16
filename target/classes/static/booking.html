@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a Room – Heaven Stay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --primary:#1F3D36; --secondary:#F5F1E8; --accent:#C8A96A; --text:#2B2B2B; --white:#FFFFFF; --error:#c0392b; --success:#27ae60; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; color:var(--text); background:var(--secondary); }
+
+    nav { background:var(--primary); display:flex; align-items:center; justify-content:space-between; padding:0 48px; height:70px; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(0,0,0,.3); }
+    .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .logo-icon { width:38px; height:38px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .logo-text { font-family:'Playfair Display',serif; color:var(--white); font-size:22px; font-weight:700; }
+    .logo-text span { color:var(--accent); }
+    nav ul { list-style:none; display:flex; gap:32px; }
+    nav ul a { color:rgba(255,255,255,.85); text-decoration:none; font-size:14px; font-weight:500; transition:.2s; }
+    nav ul a:hover, nav ul a.active { color:var(--accent); }
+
+    .page-header { background:linear-gradient(135deg,var(--primary),#2d5a4e); padding:60px 48px 40px; color:var(--white); }
+    .breadcrumb { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:12px; }
+    .breadcrumb a { color:var(--accent); text-decoration:none; }
+    .page-header h1 { font-family:'Playfair Display',serif; font-size:38px; margin-bottom:8px; }
+    .page-header p { color:rgba(255,255,255,.75); font-size:16px; }
+
+    .booking-container { max-width:1100px; margin:40px auto; padding:0 24px 80px; display:grid; grid-template-columns:1fr 380px; gap:32px; }
+
+    /* FORM */
+    .form-card { background:var(--white); border-radius:20px; padding:40px; border:1px solid #ede9de; box-shadow:0 4px 24px rgba(0,0,0,.06); }
+    .form-section-title { font-family:'Playfair Display',serif; color:var(--primary); font-size:20px; margin-bottom:24px; padding-bottom:12px; border-bottom:2px solid var(--secondary); }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-group.full { grid-column:1/-1; }
+    label { font-size:13px; font-weight:600; color:var(--primary); letter-spacing:.5px; text-transform:uppercase; }
+    input, select, textarea {
+      padding:13px 16px; border:2px solid #e8e4d9; border-radius:10px; font-size:15px;
+      color:var(--text); background:var(--secondary); outline:none; transition:.2s; font-family:'Inter',sans-serif;
+    }
+    input:focus, select:focus, textarea:focus { border-color:var(--accent); background:var(--white); }
+    textarea { resize:vertical; min-height:90px; }
+    .error-msg { color:var(--error); font-size:12px; display:none; }
+    .input-error { border-color:var(--error) !important; }
+
+    .divider { margin:32px 0; border:none; border-top:2px solid var(--secondary); }
+
+    .submit-btn {
+      width:100%; background:var(--primary); color:var(--white); border:none; padding:18px;
+      border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:.3s;
+      font-family:'Inter',sans-serif; margin-top:8px;
+    }
+    .submit-btn:hover { background:var(--accent); }
+    .submit-btn:disabled { background:#aaa; cursor:not-allowed; }
+
+    /* SIDEBAR */
+    .sidebar { display:flex; flex-direction:column; gap:20px; }
+    .summary-card { background:var(--white); border-radius:20px; padding:32px; border:1px solid #ede9de; box-shadow:0 4px 24px rgba(0,0,0,.06); }
+    .summary-title { font-family:'Playfair Display',serif; color:var(--primary); font-size:18px; margin-bottom:20px; }
+    .summary-row { display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px; }
+    .summary-row .label { color:#777; }
+    .summary-row .value { font-weight:600; color:var(--text); }
+    .summary-divider { border:none; border-top:1px dashed #ddd; margin:16px 0; }
+    .summary-total { display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:var(--primary); }
+    .summary-total .amount { color:var(--accent); font-size:22px; }
+
+    .room-preview { background:linear-gradient(135deg,var(--primary),#2d5a4e); border-radius:16px; padding:28px; color:var(--white); text-align:center; }
+    .room-preview .emoji { font-size:50px; margin-bottom:12px; }
+    .room-preview h3 { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:6px; }
+    .room-preview p { font-size:13px; color:rgba(255,255,255,.75); line-height:1.6; }
+    .room-preview .price { font-size:26px; font-weight:700; color:var(--accent); margin-top:12px; }
+
+    /* SUCCESS MODAL */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:var(--white); border-radius:20px; padding:48px; max-width:420px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+    .modal-icon { font-size:64px; margin-bottom:16px; }
+    .modal h2 { font-family:'Playfair Display',serif; color:var(--primary); font-size:26px; margin-bottom:12px; }
+    .modal p { color:#666; font-size:15px; line-height:1.7; margin-bottom:8px; }
+    .modal .booking-id { background:var(--secondary); border-radius:10px; padding:12px 20px; font-size:18px; font-weight:700; color:var(--accent); margin:16px 0; }
+    .modal-btns { display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap; }
+    .modal-btn { padding:12px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:.2s; }
+    .modal-btn.primary { background:var(--primary); color:var(--white); border:none; }
+    .modal-btn.primary:hover { background:var(--accent); }
+    .modal-btn.secondary { background:transparent; color:var(--primary); border:2px solid var(--primary); }
+
+    @media(max-width:900px) {
+      .booking-container { grid-template-columns:1fr; }
+      nav { padding:0 20px; }
+      nav ul { display:none; }
+      .page-header { padding:40px 20px 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a
+    <div class="logo-icon">🏨</div>
+    <div class="logo-text">Heaven <span>Stay</span></div>
+  </a>
+  <ul>
+
+    <li><a href="booking.html" class="active">Book Now</a></li>
+    <li><a href="../../../../../frontend/booking-history.html">My Bookings</a></li>
+    <li><a href="../../../../../frontend/payment.html">Payment</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a> › Book a Room</div>
+  <h1>Reserve Your Room</h1>
+  <p>Complete the form below to secure your perfect getaway at Heaven Stay.</p>
+</div>
+
+<div class="booking-container">
+
+  <!-- FORM -->
+  <div class="form-card">
+    <h2 class="form-section-title">🧑 Guest Information</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>First Name *</label>
+        <input type="text" id="firstName" placeholder="Suthan"/>
+        <span class="error-msg" id="err-firstName">Please enter your first name.</span>
+      </div>
+      <div class="form-group">
+        <label>Last Name *</label>
+        <input type="text" id="lastName" placeholder="Kumar"/>
+        <span class="error-msg" id="err-lastName">Please enter your last name.</span>
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="email" placeholder="Kumar@example.com"/>
+        <span class="error-msg" id="err-email">Please enter a valid email.</span>
+      </div>
+      <div class="form-group">
+        <label>Phone *</label>
+        <input type="tel" id="phone" placeholder="+94 77 123 4567"/>
+        <span class="error-msg" id="err-phone">Please enter a phone number.</span>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+    <h2 class="form-section-title">🏨 Room Details</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Room Type *</label>
+        <select id="roomId" onchange="updateSummary()">
+          <option value="">-- Select Room --</option>
+          <option value="R001">Standard Room – LKR 15,000/night</option>
+          <option value="R002">Deluxe Room – LKR 25,000/night</option>
+          <option value="R003">Presidential Suite – LKR 50,000/night</option>
+        </select>
+        <span class="error-msg" id="err-roomId">Please select a room type.</span>
+      </div>
+      <div class="form-group">
+        <label>Number of Guests *</label>
+        <input type="number" id="guests" min="1" max="6" value="1" onchange="updateSummary()"/>
+        <span class="error-msg" id="err-guests">Must be between 1 and 6.</span>
+      </div>
+      <div class="form-group">
+        <label>Check-In Date *</label>
+        <input type="date" id="checkInDate" onchange="updateSummary()"/>
+        <span class="error-msg" id="err-checkInDate">Please select a check-in date.</span>
+      </div>
+      <div class="form-group">
+        <label>Check-Out Date *</label>
+        <input type="date" id="checkOutDate" onchange="updateSummary()"/>
+        <span class="error-msg" id="err-checkOutDate">Please select a check-out date.</span>
+      </div>
+      <div class="form-group full">
+        <label>Special Requests</label>
+        <textarea id="specialRequests" placeholder="Early check-in, extra pillows, dietary requirements…"></textarea>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitBooking()">Confirm Reservation</button>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="room-preview" id="roomPreview">
+      <div class="emoji">🏨</div>
+      <h3>Select a Room</h3>
+      <p>Choose your room type to see the details and pricing here.</p>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-title">📋 Booking Summary</div>
+      <div class="summary-row"><span class="label">Room Type</span><span class="value" id="s-room">—</span></div>
+      <div class="summary-row"><span class="label">Check-In</span><span class="value" id="s-checkin">—</span></div>
+      <div class="summary-row"><span class="label">Check-Out</span><span class="value" id="s-checkout">—</span></div>
+      <div class="summary-row"><span class="label">Nights</span><span class="value" id="s-nights">0</span></div>
+      <div class="summary-row"><span class="label">Guests</span><span class="value" id="s-guests">—</span></div>
+      <hr class="summary-divider"/>
+      <div class="summary-row"><span class="label">Subtotal</span><span class="value" id="s-subtotal">LKR 0.00</span></div>
+      <div class="summary-row"><span class="label">Discount (5%)</span><span class="value" id="s-discount">-LKR 0.00</span></div>
+      <div class="summary-row"><span class="label">Tax (10%)</span><span class="value" id="s-tax">LKR 0.00</span></div>
+      <hr class="summary-divider"/>
+      <div class="summary-total"><span>Total</span><span class="amount" id="s-total">LKR 0.00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h2>Booking Confirmed!</h2>
+    <p>Your reservation at Heaven Stay has been successfully submitted.</p>
+    <p>Your Booking ID:</p>
+    <div class="booking-id" id="modalBookingId">BK-000000</div>
+    <p style="font-size:13px;color:#999;">Save this ID for check-in and payment reference.</p>
+    <div class="modal-btns">
+      <a href="../../../../../frontend/payment.html" class="modal-btn primary" id="payNowBtn">Pay Now</a>
+      <a href="../../../../../frontend/booking-history.html" class="modal-btn secondary">View Bookings</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROOM_DATA = {
+  'R001': { name:'Standard Room',  price:15000, emoji:'🛏️',  desc:'Cozy and comfortable with all essentials.' },
+  'R002': { name:'Deluxe Room',    price:25000, emoji:'🏡',  desc:'Spacious room with premium furnishings.' },
+  'R003': { name:'Presidential Suite', price:50000, emoji:'✨', desc:'Ultimate luxury with butler service.' }
+};
+
+// Defaults
+const today = new Date().toISOString().split('T')[0];
+const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+document.getElementById('checkInDate').value = today;
+document.getElementById('checkOutDate').value = tomorrow;
+document.getElementById('checkInDate').min = today;
+
+function updateSummary() {
+  const roomId = document.getElementById('roomId').value;
+  const ci = document.getElementById('checkInDate').value;
+  const co = document.getElementById('checkOutDate').value;
+  const guests = parseInt(document.getElementById('guests').value) || 1;
+
+  if (roomId && ROOM_DATA[roomId]) {
+    const r = ROOM_DATA[roomId];
+    document.getElementById('roomPreview').innerHTML = `
+      <div class="emoji">${r.emoji}</div><h3>${r.name}</h3><p>${r.desc}</p>
+      <div class="price">LKR ${r.price}<span style="font-size:14px;color:rgba(255,255,255,.7)">/night</span></div>`;
+    document.getElementById('s-room').textContent = r.name;
+  }
+
+  if (ci && co && ci < co) {
+    const nights = Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
+    const price = roomId ? ROOM_DATA[roomId].price : 0;
+    const subtotal = price * nights;
+    const discount = subtotal * 0.05;
+    const taxable = subtotal - discount;
+    const tax = taxable * 0.10;
+    const total = taxable + tax;
+    document.getElementById('s-checkin').textContent = ci;
+    document.getElementById('s-checkout').textContent = co;
+    document.getElementById('s-nights').textContent = nights;
+    document.getElementById('s-guests').textContent = guests;
+    document.getElementById('s-subtotal').textContent = 'LKR ' + subtotal.toFixed(2);
+    document.getElementById('s-discount').textContent = '-LKR ' + discount.toFixed(2);
+    document.getElementById('s-tax').textContent = 'LKR ' + tax.toFixed(2);
+    document.getElementById('s-total').textContent = 'LKR ' + total.toFixed(2);
+  }
+}
+
+function validate() {
+  let ok = true;
+  const fields = [
+    { id:'firstName', check: v => v.trim().length>1 },
+    { id:'lastName',  check: v => v.trim().length>1 },
+    { id:'email',     check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+    { id:'phone',     check: v => v.trim().length>5 },
+    { id:'roomId',    check: v => v !== '' },
+    { id:'guests',    check: v => +v>=1 && +v<=6 },
+    { id:'checkInDate',  check: v => v !== '' },
+    { id:'checkOutDate', check: v => v !== '' }
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const err = document.getElementById('err-'+f.id);
+    if (!f.check(el.value)) {
+      el.classList.add('input-error'); if(err) err.style.display='block'; ok=false;
+    } else {
+      el.classList.remove('input-error'); if(err) err.style.display='none';
+    }
+  });
+  return ok;
+}
+
+function submitBooking() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Processing…';
+
+  const payload = {
+    guestId: 'G' + Date.now(),
+    roomId:          document.getElementById('roomId').value,
+    checkInDate:     document.getElementById('checkInDate').value,
+    checkOutDate:    document.getElementById('checkOutDate').value,
+    numberOfGuests:  parseInt(document.getElementById('guests').value),
+    specialRequests: document.getElementById('specialRequests').value
+  };
+
+  fetch('http://localhost:8080/api/bookings', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => {
+    const bId = data.bookingId || 'BK-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    localStorage.setItem('lastBookingId', bId);
+    document.getElementById('modalBookingId').textContent = bId;
+    document.getElementById('payNowBtn').href = 'payment.html?bookingId=' + bId;
+    document.getElementById('successModal').classList.add('show');
+  })
+  .catch(() => {
+    // Demo fallback
+    const bId = 'BK-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    localStorage.setItem('lastBookingId', bId);
+    document.getElementById('modalBookingId').textContent = bId;
+    document.getElementById('payNowBtn').href = 'payment.html?bookingId=' + bId;
+    document.getElementById('successModal').classList.add('show');
+  })
+  .finally(() => { btn.disabled=false; btn.textContent='Confirm Reservation'; });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+──────────────────────────────────────────────────────────────────
+  DATA STRUCTURES (what the in-memory store holds)
+──────────────────────────────────────────────────────────────────
+
+BOOKINGS  (stored in BookingRepository.java)
+───────────────────────────────────────────
+  Field             Type      Description
+  ──────────────    ──────    ────────────────────────────────────
+  bookingId         String    Auto-generated  e.g. BK-A1B2C3
+  guestId           String    Guest reference e.g. G001
+  roomId            String    R001 | R002 | R003
+  checkInDate       String    Format: YYYY-MM-DD
+  checkOutDate      String    Format: YYYY-MM-DD
+  status            String    PENDING | CONFIRMED | CHECKED_IN
+                              CHECKED_OUT | CANCELLED
+  numberOfGuests    int       1 – 10
+  specialRequests   String    Free text, optional
+  subtotal          double    roomRate × nights
+  discount          double    5% of subtotal
+  tax               double    10% of (subtotal − discount)
+  total             double    (subtotal − discount) + tax
+
+PAYMENTS  (stored in PaymentRepository.java)
+────────────────────────────────────────────
+  Field             Type      Description
+  ──────────────    ──────    ────────────────────────────────────
+  paymentId         String    Auto-generated  e.g. PY-AA1122
+  bookingId         String    Links to a Booking
+  amount            double    Total amount paid
+  method            String    CARD | BANK_TRANSFER | CASH
+  status            String    PENDING | COMPLETED | FAILED | REFUNDED
+  transactionDate   String    Format: YYYY-MM-DD
+
+──────────────────────────────────────────────────────────────────
+  ROOM REFERENCE (hard-coded in Booking.java → getRoomRate())
+──────────────────────────────────────────────────────────────────
+
+  Room ID    Room Type              Rate/Night   Max Guests
+  ───────    ────────────────────   ──────────   ──────────
+  R001       Standard Room          LKR 15,000.00      2
+  R002       Deluxe Room            LKR 25,000.00      3
+  R003       Presidential Suite     LKR 50,000.00      4
+
+──────────────────────────────────────────────────────────────────
+  PRICING FORMULA
+──────────────────────────────────────────────────────────────────
+
+  Subtotal  =  Rate per Night  ×  Number of Nights
+  Discount  =  Subtotal × 5%
+  Tax       =  (Subtotal − Discount) × 10%
+  Total     =  (Subtotal − Discount) + Tax
+
+  Example — Deluxe Room (LKR 25,000.00), 3 nights:
+    Subtotal  =  LKR 25,000.00 × 3  =  LKR 75,000.00
+    Discount  =  LKR 75,000.00 × 5% =  LKR 3,750.00
+    Tax       =  LKR 71,250.00 × 10% = LKR 7,125.00
+    Total     =  LKR 71,250.00 + LKR 7,125.00 = LKR 78,375.00
+
+──────────────────────────────────────────────────────────────────
+  SAMPLE DATA (pre-loaded at startup)
+──────────────────────────────────────────────────────────────────
+
+  Bookings:
+    BK-A1B2C3  →  G001, R002 (Deluxe), 2026-05-10 to 2026-05-13, CONFIRMED, LKR 78,375.00
+    BK-D4E5F6  →  G001, R001 (Standard), 2026-04-01 to 2026-04-03, CHECKED_OUT, LKR 31,350.00
+    BK-G7H8I9  →  G002, R003 (Suite), 2026-06-20 to 2026-06-23, PENDING, LKR 156,750.00
+
+  Payments:
+    PY-AA1122  →  BK-A1B2C3, LKR 78,375.00,  CARD,          COMPLETED, 2026-05-01
+    PY-BB3344  →  BK-D4E5F6, LKR 31,350.00,  BANK_TRANSFER, COMPLETED, 2026-03-30
+
+──────────────────────────────────────────────────────────────────
+  REST API ENDPOINTS
+──────────────────────────────────────────────────────────────────
+
+  BASE URL: http://localhost:8080
+
+  BOOKINGS
+  ─────────────────────────────────────────────────────────────────
+  POST   /api/bookings                  Create new booking
+  GET    /api/bookings                  Get all bookings
+  GET    /api/bookings?status=CONFIRMED Filter by status
+  GET    /api/bookings?guestId=G001     Filter by guest
+  GET    /api/bookings/{id}             Get one booking
+  PUT    /api/bookings/{id}             Update booking
+  PUT    /api/bookings/{id}/confirm     Confirm booking
+  PUT    /api/bookings/{id}/cancel      Cancel booking
+  DELETE /api/bookings/{id}             Delete booking
+  GET    /api/bookings/availability     Check room availability
+           ?roomId=R001&checkIn=YYYY-MM-DD&checkOut=YYYY-MM-DD
+
+  PAYMENTS
+  ─────────────────────────────────────────────────────────────────
+  POST   /api/payments                  Process new payment
+  GET    /api/payments                  Get all payments
+  GET    /api/payments/{id}             Get one payment
+  GET    /api/payments/booking/{id}     Get payment by booking ID
+  PUT    /api/payments/{id}/refund      Refund a payment
+  GET    /api/payments/{id}/invoice     Get invoice number
+  DELETE /api/payments/{id}             Delete payment
+
+════════════════════════════════════════════════════════════════════
