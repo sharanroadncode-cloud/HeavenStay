@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Haven Stay - Records</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #F5F1E8; color: #2B2B2B; font-family: Arial, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: #1F3D36; padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; color: #C8A96A; font-family: Georgia, serif; }
+        .back { font-size: 0.82rem; color: #a0b8a8; text-decoration: none; }
+        .back:hover { color: #C8A96A; }
+        .page-header { padding: 36px 48px 0; }
+        .section-label { font-size: 0.7rem; color: #C8A96A; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 8px; }
+        .section-title { font-size: 1.9rem; color: #1F3D36; font-family: Georgia, serif; font-weight: normal; margin-bottom: 6px; }
+        .section-sub { font-size: 0.82rem; color: #888; }
+        .gold-line { width: 36px; height: 2px; background: #C8A96A; margin: 14px 0 0; }
+        .tabs { display: flex; padding: 0 48px; border-bottom: 1px solid #d0c8b8; margin-top: 28px; background: #fff; }
+        .tab-btn { display: flex; align-items: center; gap: 7px; padding: 13px 24px; font-size: 0.78rem; color: #888; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; margin-bottom: -1px; letter-spacing: 0.05em; }
+        .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+        .tab-btn:hover { color: #1F3D36; }
+        .tab-btn:hover svg { stroke: #1F3D36; }
+        .tab-btn.active { color: #1F3D36; border-bottom-color: #C8A96A; font-weight: bold; }
+        .tab-btn.active svg { stroke: #1F3D36; }
+        .content { flex: 1; padding: 28px 48px; }
+        .stats-strip { display: flex; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+        .stat-card { background: #fff; border: 1px solid #e0d8c8; border-left: 3px solid #C8A96A; border-radius: 3px; padding: 14px 22px; min-width: 140px; }
+        .stat-value { font-size: 1.8rem; color: #1F3D36; font-family: Georgia, serif; }
+        .stat-label { font-size: 0.66rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+        .search-bar { display: flex; gap: 12px; margin-bottom: 18px; }
+        .search-input { padding: 10px 14px; border: 1px solid #d0c8b8; border-radius: 3px; font-size: 0.84rem; color: #2B2B2B; background: #fdfcf9; outline: none; width: 300px; }
+        .search-input:focus { border-color: #1F3D36; }
+        .refresh-btn { display: flex; align-items: center; gap: 6px; padding: 10px 18px; background: #1F3D36; color: #C8A96A; border: none; border-radius: 3px; font-size: 0.78rem; cursor: pointer; letter-spacing: 0.05em; }
+        .refresh-btn:hover { background: #162d28; }
+        .refresh-btn svg { width: 14px; height: 14px; }
+        .table-wrapper { background: #fff; border: 1px solid #e0d8c8; border-radius: 3px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+        thead tr { background: #1F3D36; }
+        thead th { padding: 13px 16px; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: #C8A96A; font-weight: normal; }
+        tbody tr { border-bottom: 1px solid #f0e8d8; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #fdfcf9; }
+        tbody td { padding: 12px 16px; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 2px; font-size: 0.7rem; font-weight: bold; }
+        .badge-green { background: #edf7f2; border: 1px solid #1F3D36; color: #1F3D36; }
+        .badge-red { background: #fdf2f2; border: 1px solid #c0392b; color: #c0392b; }
+        .badge-gold { background: #fdf8ee; border: 1px solid #C8A96A; color: #a07830; }
+        .id-cell { font-weight: bold; color: #1F3D36; font-size: 0.78rem; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .empty { text-align: center; padding: 48px; color: #aaa; font-size: 0.84rem; }
+        .error-row td { color: #c0392b; }
+        footer { background: #1F3D36; color: #5a7a6a; padding: 14px 48px; display: flex; justify-content: space-between; font-size: 0.72rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Haven Stay</div>
+    <a href="dashboard.html" class="back">← Back to Reception</a>
+</header>
+
+<div class="page-header">
+    <p class="section-label">Reception Management</p>
+    <h1 class="section-title">All Records</h1>
+    <p class="section-sub">Browse all check-ins, check-outs and room key cards</p>
+    <div class="gold-line"></div>
+</div>
+
+<div class="tabs">
+    <!-- Bell icon tab -->
+    <button class="tab-btn active" onclick="switchTab('checkins')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C12 2 7 5.5 7 12H17C17 5.5 12 2 12 2Z"/>
+            <line x1="12" y1="1" x2="12" y2="2.5"/>
+            <rect x="5" y="12" width="14" height="2.5" rx="1.25"/>
+            <path d="M10 14.5C10 15.6 10.9 16.5 12 16.5C13.1 16.5 14 15.6 14 14.5"/>
+        </svg>
+        Check-Ins
+    </button>
+    <!-- Key icon tab -->
+    <button class="tab-btn" onclick="switchTab('checkouts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8.5" cy="10" r="4.5"/>
+            <circle cx="8.5" cy="10" r="1.8"/>
+            <line x1="12.2" y1="12.8" x2="21" y2="21"/>
+            <line x1="17.5" y1="17.5" x2="19.5" y2="15.5"/>
+            <line x1="15" y1="19.5" x2="17" y2="17.5"/>
+        </svg>
+        Check-Outs
+    </button>
+    <!-- Card icon tab -->
+    <button class="tab-btn" onclick="switchTab('keycards')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+            <line x1="6" y1="14" x2="10" y2="14"/>
+            <line x1="6" y1="16.5" x2="8" y2="16.5"/>
+        </svg>
+        Key Cards
+    </button>
+</div>
+
+<div class="content">
+
+    <div class="tab-panel active" id="panel-checkins">
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" id="ci-total">—</div>
+                <div class="stat-label">Total Check-Ins</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" placeholder="Search by ID, guest, room..." oninput="filterTable('ci-table', this.value)"/>
+            <button class="refresh-btn" onclick="loadAll()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+                Refresh
+            </button>
+        </div>
+        <div class="table-wrapper">
+            <table id="ci-table">
+                <thead>
+                <tr>
+                    <th>Check-In ID</th>
+                    <th>Booking ID</th>
+                    <th>Guest ID</th>
+                    <th>Staff ID</th>
+                    <th>Room</th>
+                    <th>Arrival Time</th>
+                    <th>Key Card</th>
+                </tr>
+                </thead>
+                <tbody id="ci-body"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-checkouts">
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" id="co-total">—</div>
+                <div class="stat-label">Total Check-Outs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="co-revenue">—</div>
+                <div class="stat-label">Total Revenue (LKR)</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" placeholder="Search by ID, guest..." oninput="filterTable('co-table', this.value)"/>
+            <button class="refresh-btn" onclick="loadAll()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+                Refresh
+            </button>
+        </div>
+        <div class="table-wrapper">
+            <table id="co-table">
+                <thead>
+                <tr>
+                    <th>Check-Out ID</th>
+                    <th>Booking ID</th>
+                    <th>Guest ID</th>
+                    <th>Staff ID</th>
+                    <th>Departure Time</th>
+                    <th>Extra Charges</th>
+                    <th>Total Bill</th>
+                </tr>
+                </thead>
+                <tbody id="co-body"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-panel" id="panel-keycards">
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-value" id="kc-total">—</div>
+                <div class="stat-label">Total Cards</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="kc-active">—</div>
+                <div class="stat-label">Active Cards</div>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input class="search-input" type="text" placeholder="Search by card ID, room, guest..." oninput="filterTable('kc-table', this.value)"/>
+            <button class="refresh-btn" onclick="loadAll()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+                Refresh
+            </button>
+        </div>
+        <div class="table-wrapper">
+            <table id="kc-table">
+                <thead>
+                <tr>
+                    <th>Card ID</th>
+                    <th>Room</th>
+                    <th>Guest ID</th>
+                    <th>Status</th>
+                    <th>Issued Date</th>
+                    <th>Expiry Date</th>
+                </tr>
+                </thead>
+                <tbody id="kc-body"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <span>© 2024 Haven Stay Hotel</span>
+    <span id="last-updated">Last updated: —</span>
+</footer>
+
+<script>
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            const active = ['checkins','checkouts','keycards'][i] === tab;
+            btn.classList.toggle('active', active);
+            const svg = btn.querySelector('svg');
+            if (svg) svg.setAttribute('stroke', active ? '#1F3D36' : '#888');
+        });
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + tab).classList.add('active');
+    }
+
+    async function loadAll() {
+        await Promise.all([loadCheckIns(), loadCheckOuts(), loadKeyCards()]);
+        document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+    }
+
+    async function loadCheckIns() {
+        const tbody = document.getElementById('ci-body');
+        try {
+            const res = await fetch('http://localhost:8080/checkin');
+            const data = await res.json();
+            const rows = data.data || [];
+            document.getElementById('ci-total').textContent = rows.length;
+            if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No check-in records found.</td></tr>'; return; }
+            tbody.innerHTML = [...rows].reverse().map(ci => `
+                <tr>
+                    <td class="id-cell">${ci.checkInId}</td>
+                    <td>${ci.bookingId}</td>
+                    <td>${ci.guestId}</td>
+                    <td>${ci.staffId}</td>
+                    <td><span class="badge badge-gold">Room ${ci.roomNumber}</span></td>
+                    <td style="color:#888;font-size:0.78rem">${ci.arrivalTime}</td>
+                    <td style="color:#aaa;font-size:0.76rem">${ci.keyCardId}</td>
+                </tr>`).join('');
+        } catch {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty" style="color:#c0392b">Cannot connect to server.</td></tr>';
+        }
+    }
+
+    async function loadCheckOuts() {
+        const tbody = document.getElementById('co-body');
+        try {
+            const res = await fetch('http://localhost:8080/checkout');
+            const data = await res.json();
+            const rows = data.data || [];
+            document.getElementById('co-total').textContent = rows.length;
+            document.getElementById('co-revenue').textContent = rows.reduce((s, r) => s + r.totalBill, 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No check-out records found.</td></tr>'; return; }
+            tbody.innerHTML = [...rows].reverse().map(co => `
+                <tr>
+                    <td class="id-cell">${co.checkOutId}</td>
+                    <td>${co.bookingId}</td>
+                    <td>${co.guestId}</td>
+                    <td>${co.staffId}</td>
+                    <td style="color:#888;font-size:0.78rem">${co.departureTime}</td>
+                    <td>LKR ${co.extraCharges.toFixed(2)}</td>
+                    <td><span class="badge badge-green">LKR ${co.totalBill.toFixed(2)}</span></td>
+                </tr>`).join('');
+        } catch {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty" style="color:#c0392b">Cannot connect to server.</td></tr>';
+        }
+    }
+
+    async function loadKeyCards() {
+        const tbody = document.getElementById('kc-body');
+        try {
+            const res = await fetch('http://localhost:8080/keycard');
+            const data = await res.json();
+            const rows = data.data || [];
+            document.getElementById('kc-total').textContent = rows.length;
+            document.getElementById('kc-active').textContent = rows.filter(k => k.active).length;
+            if (rows.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty">No key card records found.</td></tr>'; return; }
+            tbody.innerHTML = [...rows].reverse().map(kc => `
+                <tr>
+                    <td class="id-cell">${kc.cardId}</td>
+                    <td><span class="badge badge-gold">Room ${kc.roomNumber}</span></td>
+                    <td>${kc.guestId}</td>
+                    <td><span class="badge ${kc.active ? 'badge-green' : 'badge-red'}">${kc.active ? 'Active' : 'Inactive'}</span></td>
+                    <td style="color:#888;font-size:0.78rem">${kc.issuedDate}</td>
+                    <td style="color:#888;font-size:0.78rem">${kc.expiryDate}</td>
+                </tr>`).join('');
+        } catch {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty" style="color:#c0392b">Cannot connect to server.</td></tr>';
+        }
+    }
+
+    function filterTable(tableId, query) {
+        const q = query.toLowerCase();
+        document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
+    loadAll();
+    setInterval(loadAll, 30000);
+</script>
+
+</body>
+</html>

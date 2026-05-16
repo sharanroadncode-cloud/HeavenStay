@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Haven Stay - Reception</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #F5F1E8; color: #2B2B2B; font-family: Georgia, serif; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: #1F3D36; padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6rem; color: #C8A96A; letter-spacing: 0.05em; }
+        .logo span { color: #fff; font-size: 0.9rem; font-family: Arial, sans-serif; display: block; letter-spacing: 0.2em; margin-top: 2px; }
+        .clock { font-family: Arial, sans-serif; font-size: 0.82rem; color: #a0b8a8; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; }
+        .welcome { text-align: center; margin-bottom: 52px; }
+        .welcome h1 { font-size: 2.6rem; color: #1F3D36; font-weight: normal; margin-bottom: 8px; }
+        .welcome p { font-size: 0.95rem; color: #666; font-family: Arial, sans-serif; }
+        .gold-line { width: 60px; height: 2px; background: #C8A96A; margin: 16px auto 0; }
+        .cards { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+        .card { background: #fff; border-radius: 4px; padding: 40px 32px; width: 220px; text-align: center; text-decoration: none; color: #2B2B2B; border: 1px solid #e0d8c8; border-bottom: 3px solid #C8A96A; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(31,61,54,0.12); }
+        .card-icon { display: flex; justify-content: center; align-items: center; height: 48px; margin-bottom: 16px; }
+        .card-icon svg { width: 38px; height: 38px; }
+        .card-title { font-size: 1.1rem; color: #1F3D36; margin-bottom: 8px; }
+        .card-desc { font-size: 0.78rem; color: #888; font-family: Arial, sans-serif; line-height: 1.5; }
+        .card-link { display: inline-block; margin-top: 20px; padding: 7px 20px; background: #1F3D36; color: #C8A96A; font-family: Arial, sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; border-radius: 2px; }
+        .stats { display: flex; gap: 48px; justify-content: center; padding: 32px 48px; background: #1F3D36; margin-top: auto; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2rem; color: #C8A96A; }
+        .stat-label { font-size: 0.7rem; color: #a0b8a8; font-family: Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 4px; }
+        footer { background: #162d28; color: #5a7a6a; padding: 14px 48px; display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.72rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Haven Stay <span>RECEPTION MANAGEMENT</span></div>
+    <div class="clock" id="clock"></div>
+</header>
+
+<main>
+    <div class="welcome">
+        <h1>Welcome to Reception</h1>
+        <p>Manage guest arrivals, departures and room key cards</p>
+        <div class="gold-line"></div>
+    </div>
+
+    <div class="cards">
+        <a href="checkin.html" class="card">
+            <div class="card-icon">
+                <!-- Bell / concierge icon -->
+                <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 5C19 5 11 10.5 11 20H27C27 10.5 19 5 19 5Z" stroke="#C8A96A" stroke-width="1.6" stroke-linejoin="round" fill="none"/>
+                    <rect x="8" y="20" width="22" height="3" rx="1.5" stroke="#C8A96A" stroke-width="1.6" fill="none"/>
+                    <line x1="19" y1="3" x2="19" y2="5.5" stroke="#C8A96A" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M16.5 23.5C16.5 24.88 17.62 26 19 26C20.38 26 21.5 24.88 21.5 23.5" stroke="#C8A96A" stroke-width="1.6" fill="none"/>
+                    <line x1="13" y1="20" x2="13" y2="23" stroke="#C8A96A" stroke-width="1.2" stroke-linecap="round"/>
+                    <line x1="25" y1="20" x2="25" y2="23" stroke="#C8A96A" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="card-title">Guest Check-In</div>
+            <div class="card-desc">Register arriving guests and assign room key cards</div>
+            <div class="card-link">Open →</div>
+        </a>
+        <a href="checkout.html" class="card">
+            <div class="card-icon">
+                <!-- Key icon -->
+                <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="13.5" cy="16.5" r="7" stroke="#C8A96A" stroke-width="1.6" fill="none"/>
+                    <circle cx="13.5" cy="16.5" r="3" stroke="#C8A96A" stroke-width="1.4" fill="none"/>
+                    <line x1="19.5" y1="19.5" x2="32" y2="32" stroke="#C8A96A" stroke-width="1.6" stroke-linecap="round"/>
+                    <line x1="27" y1="27" x2="29.5" y2="24.5" stroke="#C8A96A" stroke-width="1.6" stroke-linecap="round"/>
+                    <line x1="23.5" y1="30" x2="26" y2="27.5" stroke="#C8A96A" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="card-title">Guest Check-Out</div>
+            <div class="card-desc">Process departures and generate final bill</div>
+            <div class="card-link">Open →</div>
+        </a>
+        <a href="records.html" class="card">
+            <div class="card-icon">
+                <!-- Clipboard / records icon -->
+                <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="9" y="8" width="20" height="25" rx="2" stroke="#C8A96A" stroke-width="1.6" fill="none"/>
+                    <path d="M15 8V7C15 5.9 15.9 5 17 5H21C22.1 5 23 5.9 23 7V8" stroke="#C8A96A" stroke-width="1.6" fill="none"/>
+                    <rect x="15" y="6.5" width="8" height="3" rx="1" fill="#F5F1E8"/>
+                    <line x1="13" y1="15" x2="25" y2="15" stroke="#C8A96A" stroke-width="1.4" stroke-linecap="round"/>
+                    <line x1="13" y1="20" x2="25" y2="20" stroke="#C8A96A" stroke-width="1.4" stroke-linecap="round"/>
+                    <line x1="13" y1="25" x2="20" y2="25" stroke="#C8A96A" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="card-title">View Records</div>
+            <div class="card-desc">Browse all check-ins, check-outs and key cards</div>
+            <div class="card-link">Open →</div>
+        </a>
+    </div>
+</main>
+
+<div class="stats">
+    <div class="stat">
+        <div class="stat-value" id="ciCount">0</div>
+        <div class="stat-label">Total Check-Ins</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value" id="coCount">0</div>
+        <div class="stat-label">Total Check-Outs</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value" id="kcCount">0</div>
+        <div class="stat-label">Active Key Cards</div>
+    </div>
+</div>
+
+<footer>
+    <span>© 2024 Haven Stay Hotel</span>
+    <span>Reception Management System v1.0</span>
+</footer>
+
+<script>
+    function updateClock() {
+        document.getElementById('clock').textContent = new Date().toLocaleString();
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    async function loadStats() {
+        try {
+            const [ci, co, kc] = await Promise.all([
+                fetch('http://localhost:8080/checkin').then(r => r.json()),
+                fetch('http://localhost:8080/checkout').then(r => r.json()),
+                fetch('http://localhost:8080/keycard').then(r => r.json())
+            ]);
+            document.getElementById('ciCount').textContent = ci.count || 0;
+            document.getElementById('coCount').textContent = co.count || 0;
+            document.getElementById('kcCount').textContent = (kc.data || []).filter(k => k.active).length;
+        } catch (e) {
+            console.log('Server not running');
+        }
+    }
+    loadStats();
+</script>
+
+</body>
+</html>
