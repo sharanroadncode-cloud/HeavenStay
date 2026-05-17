@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<!--
+  File : admin-manage.html
+  Path : src/main/resources/templates/admin-manage.html
+  Desc : Heaven Stay – Admin Registration & Management Page (Thymeleaf)
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Management – Heaven Stay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--p:#1F3D36;--s:#F5F1E8;--a:#C8A96A;--t:#2B2B2B;--w:#fff;--bd:#D6CFC0;--err:#B94A48;--ok:#2E7D52;--lg:#F7F6F3;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--s);color:var(--t);min-height:100vh;display:flex;flex-direction:column}
+    .shell{display:grid;grid-template-columns:240px 1fr;flex:1}
+    aside{background:var(--p);min-height:100vh;padding:0;display:flex;flex-direction:column}
+    .aside-top{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .aside-logo{width:44px;height:44px;background:var(--a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+    .aside-top h2{font-family:'Playfair Display',serif;color:#fff;font-size:1.1rem}
+    .aside-top small{color:var(--a);font-size:.72rem;letter-spacing:2px;text-transform:uppercase}
+    nav{padding:18px 0;flex:1}
+    .nav-section{padding:6px 24px 2px;font-size:.68rem;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-top:8px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 24px;color:rgba(255,255,255,.72);text-decoration:none;font-size:.87rem;font-weight:500;transition:all .2s;border-left:3px solid transparent;margin:1px 0}
+    .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--a)}
+    .nav-item .ico{font-size:1rem;width:20px;text-align:center}
+    .aside-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,.1)}
+    .aside-user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .av{width:34px;height:34px;background:var(--a);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--p);font-weight:700;font-size:.9rem;flex-shrink:0}
+    .aside-user-info span{color:#fff;font-size:.86rem;font-weight:600;display:block}
+    .aside-user-info small{color:rgba(255,255,255,.5);font-size:.72rem}
+    .btn-logout{display:block;text-align:center;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:7px;font-size:.82rem;text-decoration:none;transition:all .2s}
+    .btn-logout:hover{background:rgba(184,74,72,.3);color:#fff;border-color:#B94A48}
+    .content{padding:36px;overflow-y:auto}
+    .page-hd{margin-bottom:24px}
+    .page-hd h1{font-family:'Playfair Display',serif;color:var(--p);font-size:1.7rem}
+    .page-hd p{color:#888;font-size:.86rem;margin-top:4px}
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#999;margin-bottom:10px}
+    .breadcrumb a{color:var(--p);text-decoration:none;font-weight:600}
+    .alert{border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .ae{background:#FDECEA;color:var(--err);border-left:4px solid var(--err)}
+    .as{background:#E6F4ED;color:var(--ok);border-left:4px solid var(--ok)}
+
+    /* Two-panel layout */
+    .main-grid{display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:start}
+
+    /* Registration card */
+    .card{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(31,61,54,.08);overflow:hidden}
+    .card-hd{background:var(--p);padding:20px 28px}
+    .card-hd h3{font-family:'Playfair Display',serif;color:#fff;font-size:1.1rem}
+    .card-hd p{color:rgba(255,255,255,.6);font-size:.82rem;margin-top:3px}
+    .card-bd{padding:24px 28px}
+    .r2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .fg{margin-bottom:14px}
+    .fg label{display:block;font-size:.77rem;font-weight:600;color:var(--p);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .fg label .req{color:var(--a);margin-left:2px}
+    .fc{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-size:.91rem;font-family:'Inter',sans-serif;color:var(--t);background:#FAFAF8;outline:none;transition:border-color .2s}
+    .fc:focus{border-color:var(--p);background:#fff}
+
+    /* Permission checkboxes */
+    .perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:5px}
+    .perm-item{display:flex;align-items:center;gap:7px;font-size:.84rem;cursor:pointer;padding:6px 10px;border:1.5px solid var(--bd);border-radius:7px;transition:all .2s}
+    .perm-item:hover,.perm-item.ck{border-color:var(--p);background:rgba(31,61,54,.05)}
+    .perm-item input{accent-color:var(--p);width:13px;height:13px;cursor:pointer}
+    .hint{font-size:.72rem;color:#999;margin-top:3px}
+
+    .btn-row{display:flex;gap:10px;margin-top:16px}
+    .btn{padding:10px 22px;border:none;border-radius:7px;font-size:.9rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+    .btn:active{transform:scale(.98)}
+    .btn-a{background:var(--a);color:var(--p)}.btn-a:hover{background:#b8954e}
+    .btn-cl{background:var(--s);color:var(--p);border:1.5px solid var(--bd);text-decoration:none;display:flex;align-items:center}
+    .btn-cl:hover{background:#ece8de}
+
+    /* Admin table */
+    .tbl-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(31,61,54,.08);overflow:hidden;margin-top:22px}
+    table{width:100%;border-collapse:collapse}
+    thead{background:var(--p)}
+    thead th{color:#fff;font-size:.73rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:12px 14px;text-align:left}
+    tbody tr{border-bottom:1px solid #F0EDE6;transition:background .15s}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:#FAFAF8}
+    td{padding:11px 14px;font-size:.86rem;vertical-align:middle}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.71rem;font-weight:600}
+    .b-act{background:#E6F4ED;color:var(--ok)}.b-sus{background:#FDECEA;color:var(--err)}
+    .acts{display:flex;gap:5px;flex-wrap:wrap}
+    .ab{padding:4px 10px;border:none;border-radius:6px;font-size:.75rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:opacity .15s;text-decoration:none;display:inline-flex;align-items:center}
+    .ab:hover{opacity:.82}
+    .ab-edit{background:#E8F4FD;color:#1565C0;border:1px solid #90CAF9}
+    .ab-sus {background:#FFF3CD;color:#7A5520; border:1px solid #F0D080}
+    .ab-res {background:#E6F4ED; color:var(--ok);border:1px solid #A5D6B5}
+    .ab-del {background:#FDECEA; color:var(--err);border:1px solid #F0A8A8}
+    .empty{text-align:center;padding:36px;color:#aaa;font-size:.88rem}
+
+    /* Edit modal */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+    .modal-bg.open{display:flex}
+    .modal{background:#fff;border-radius:14px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.22)}
+    .modal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .modal-hd h3{font-family:'Playfair Display',serif;color:var(--p);font-size:1.15rem}
+    .modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:#888;padding:4px}
+
+    @media(max-width:1000px){.main-grid{grid-template-columns:1fr}}
+    @media(max-width:860px){.shell{grid-template-columns:1fr}aside{display:none}}
+    footer{text-align:center;padding:12px;font-size:.75rem;color:#aaa;background:#fff;border-top:1px solid var(--bd)}
+  </style>
+</head>
+<body>
+<div class="shell">
+
+<aside>
+  <div class="aside-top"><div class="aside-logo">🏨</div><h2>Heaven Stay</h2><small>Admin Portal</small></div>
+  <nav>
+    <div class="nav-section">Main</div>
+    <a href="/admin/dashboard" class="nav-item"><span class="ico">📊</span> Dashboard</a>
+    <div class="nav-section">Management</div>
+    <a href="/admin/manage"  class="nav-item active"><span class="ico">👤</span> Admin Accounts</a>
+    <a href="/admin/reports" class="nav-item"><span class="ico">📋</span> Reports &amp; Config</a>
+    <div class="nav-section">System</div>
+    <a href="/rooms" class="nav-item"><span class="ico">🏠</span> Room Inventory</a>
+    <a href="/users" class="nav-item"><span class="ico">👥</span> User Management</a>
+  </nav>
+  <div class="aside-footer">
+    <div class="aside-user">
+      <div class="av" th:text="${admin.username.substring(0,1).toUpperCase()}">A</div>
+      <div class="aside-user-info"><span th:text="${admin.username}">Admin</span><small th:text="${admin.adminId}">ADM001</small></div>
+    </div>
+    <a href="/admin/logout" class="btn-logout">↪ Sign Out</a>
+  </div>
+</aside>
+
+<div class="content">
+  <div class="breadcrumb"><a href="/admin/dashboard">Dashboard</a> › <span>Admin Accounts</span></div>
+  <div class="page-hd"><h1>Admin Registration &amp; Management</h1><p>Create new admin accounts and manage existing ones</p></div>
+
+  <div th:if="${errorMsg}"   class="alert ae">⚠ <span th:text="${errorMsg}"></span></div>
+  <div th:if="${successMsg}" class="alert as">✓ <span th:text="${successMsg}"></span></div>
+
+  <div class="main-grid">
+
+    <!-- Registration form -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><h3>Register New Admin</h3><p>Fill in the details to create an admin account</p></div>
+        <div class="card-bd">
+          <form th:action="@{/admin/manage/add}" method="post">
+            <div class="r2">
+              <div class="fg"><label>Username <span class="req">*</span></label>
+                <input type="text" name="username" class="fc" placeholder="e.g. john_admin" required/></div>
+              <div class="fg"><label>Contact No.</label>
+                <input type="tel" name="contactNo" class="fc" placeholder="+94 77 000 0000"/></div>
+            </div>
+            <div class="fg"><label>Email <span class="req">*</span></label>
+              <input type="email" name="email" class="fc" placeholder="admin@heavenstay.com" required/></div>
+            <div class="r2">
+              <div class="fg"><label>Password <span class="req">*</span></label>
+                <input type="password" name="password" class="fc" placeholder="Min. 6 characters" required/></div>
+              <div class="fg"><label>Confirm Password <span class="req">*</span></label>
+                <input type="password" name="confirmPassword" class="fc" placeholder="Repeat password" required/></div>
+            </div>
+            <div class="r2">
+              <div class="fg"><label>Department <span class="req">*</span></label>
+                <select name="department" class="fc" required>
+                  <option value="">-- Select --</option>
+                  <option value="Management">Management</option>
+                  <option value="Reception">Reception</option>
+                  <option value="Housekeeping">Housekeeping</option>
+                  <option value="Finance">Finance</option>
+                  <option value="IT">IT</option>
+                </select></div>
+              <div class="fg"><label>Shift</label>
+                <select name="shift" class="fc">
+                  <option value="Morning">Morning</option>
+                  <option value="Evening">Evening</option>
+                  <option value="Night">Night</option>
+                </select></div>
+            </div>
+            <div class="fg">
+              <label>Permissions</label>
+              <div class="perm-grid">
+                <label class="perm-item"><input type="checkbox" value="ROOM_MANAGE"   onchange="syncPerms(this)"/> Room Manage</label>
+                <label class="perm-item"><input type="checkbox" value="BOOKING_VIEW"  onchange="syncPerms(this)"/> Booking View</label>
+                <label class="perm-item"><input type="checkbox" value="REPORT_GEN"    onchange="syncPerms(this)"/> Report Generate</label>
+                <label class="perm-item"><input type="checkbox" value="USER_MANAGE"   onchange="syncPerms(this)"/> User Manage</label>
+                <label class="perm-item"><input type="checkbox" value="CONFIG_EDIT"   onchange="syncPerms(this)"/> Config Edit</label>
+                <label class="perm-item"><input type="checkbox" value="FULL_ACCESS"   onchange="syncPerms(this)"/> Full Access</label>
+              </div>
+              <input type="hidden" name="permissions" id="permsHidden"/>
+              <p class="hint">Stored as comma-separated tokens in admins.txt</p>
+            </div>
+            <div class="btn-row">
+              <button type="submit" class="btn btn-a">Create Admin Account</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats summary -->
+    <div>
+      <div class="card">
+        <div class="card-hd"><h3>Account Summary</h3></div>
+        <div class="card-bd">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:var(--s);border-radius:9px;padding:14px;text-align:center">
+              <div style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--p);font-weight:700"
+                   th:text="${#lists.size(admins)}">0</div>
+              <div style="font-size:.74rem;color:#888;text-transform:uppercase;letter-spacing:.4px;margin-top:3px">Total Admins</div>
+            </div>
+            <div style="background:#E6F4ED;border-radius:9px;padding:14px;text-align:center">
+              <div style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--ok);font-weight:700"
+                   th:text="${#lists.size(admins.?[status=='Active'])}">0</div>
+              <div style="font-size:.74rem;color:#888;text-transform:uppercase;letter-spacing:.4px;margin-top:3px">Active</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;background:#FDECEA;border-radius:9px;padding:14px;text-align:center">
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--err);font-weight:700"
+                 th:text="${#lists.size(admins.?[status=='Suspended'])}">0</div>
+            <div style="font-size:.74rem;color:#888;text-transform:uppercase;letter-spacing:.4px;margin-top:2px">Suspended</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin table -->
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Admin ID</th><th>Username</th><th>Email</th>
+        <th>Department</th><th>Permissions</th><th>Last Login</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(admins)}">
+          <td colspan="8" class="empty">No admin accounts yet. Create one above.</td></tr>
+        <tr th:each="a : ${admins}">
+          <td style="font-family:monospace;font-size:.76rem;color:#888" th:text="${a.adminId}"></td>
+          <td style="font-weight:700" th:text="${a.username}"></td>
+          <td th:text="${a.email}"></td>
+          <td th:text="${a.department}"></td>
+          <td style="font-size:.77rem;color:#666;max-width:160px" th:text="${a.permissionsDisplay}"></td>
+          <td style="font-size:.78rem;color:#888" th:text="${a.lastLogin.isBlank()?'Never':a.lastLogin}"></td>
+          <td><span class="badge" th:classappend="${a.status=='Active'}?'b-act':'b-sus'" th:text="${a.status}"></span></td>
+          <td>
+            <div class="acts">
+              <button type="button" class="ab ab-edit"
+                th:onclick="|openEdit('${a.adminId}','${a.email}','${a.contactNo}','${a.department}','${a.shift}','${a.permissionsDisplay}')|">Edit</button>
+              <form th:if="${a.status=='Active'}"   th:action="@{/admin/manage/suspend}" method="post" style="display:inline">
+                <input type="hidden" name="adminId" th:value="${a.adminId}"/>
+                <button type="submit" class="ab ab-sus" onclick="return confirm('Suspend this admin?')">Suspend</button>
+              </form>
+              <form th:if="${a.status=='Suspended'}" th:action="@{/admin/manage/restore}" method="post" style="display:inline">
+                <input type="hidden" name="adminId" th:value="${a.adminId}"/>
+                <button type="submit" class="ab ab-res">Restore</button>
+              </form>
+              <form th:action="@{/admin/manage/delete}" method="post" style="display:inline">
+                <input type="hidden" name="adminId" th:value="${a.adminId}"/>
+                <button type="submit" class="ab ab-del" onclick="return confirm('Permanently delete?')">Del</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<footer>© 2025 Heaven Stay Hotel · Admin Management System</footer>
+
+<!-- Edit modal -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3>✏️ Edit Admin Account</h3>
+      <button class="modal-close" onclick="closeEdit()">✕</button>
+    </div>
+    <form th:action="@{/admin/manage/update}" method="post">
+      <input type="hidden" name="adminId" id="editAdminId"/>
+      <div class="r2">
+        <div class="fg"><label>Email <span class="req">*</span></label>
+          <input type="email" name="email" id="editEmail" class="fc" required/></div>
+        <div class="fg"><label>Contact No.</label>
+          <input type="tel" name="contactNo" id="editContact" class="fc"/></div>
+      </div>
+      <div class="r2">
+        <div class="fg"><label>Department</label>
+          <select name="department" id="editDept" class="fc">
+            <option value="Management">Management</option>
+            <option value="Reception">Reception</option>
+            <option value="Housekeeping">Housekeeping</option>
+            <option value="Finance">Finance</option>
+            <option value="IT">IT</option>
+          </select></div>
+        <div class="fg"><label>Shift</label>
+          <select name="shift" id="editShift" class="fc">
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="Night">Night</option>
+          </select></div>
+      </div>
+      <div class="fg"><label>New Password <span style="color:#aaa;font-weight:400;text-transform:none">(leave blank to keep)</span></label>
+        <input type="password" name="newPassword" class="fc" placeholder="New password"/></div>
+      <div class="fg"><label>Confirm New Password</label>
+        <input type="password" name="confirmPassword" class="fc" placeholder="Repeat new password"/></div>
+      <div class="fg"><label>Permissions</label>
+        <input type="text" name="permissions" id="editPerms" class="fc"
+               placeholder="ROOM_MANAGE,BOOKING_VIEW,REPORT_GEN"/>
+        <p class="hint">Comma-separated tokens</p></div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-a" style="background:var(--p);color:#fff">Save Changes</button>
+        <button type="button" class="btn btn-cl" onclick="closeEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function syncPerms(cb){
+    cb.closest('.perm-item').classList.toggle('ck', cb.checked);
+    const vals=[...document.querySelectorAll('.perm-item input:checked')].map(c=>c.value);
+    document.getElementById('permsHidden').value=vals.join(',');
+  }
+  function openEdit(id,email,contact,dept,shift,perms){
+    document.getElementById('editAdminId').value = id;
+    document.getElementById('editEmail').value   = email;
+    document.getElementById('editContact').value = contact;
+    document.getElementById('editPerms').value   = perms==='None'?'':perms;
+    const d=document.getElementById('editDept');
+    for(let o of d.options) o.selected=(o.value===dept);
+    const s=document.getElementById('editShift');
+    for(let o of s.options) o.selected=(o.value===shift);
+    document.getElementById('editModal').classList.add('open');
+  }
+  function closeEdit(){ document.getElementById('editModal').classList.remove('open'); }
+  document.getElementById('editModal').addEventListener('click',e=>{if(e.target===document.getElementById('editModal'))closeEdit();});
+</script>
+</body>
+</html>
