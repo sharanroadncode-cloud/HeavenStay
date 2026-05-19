@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span></h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/customer/dashboard}">Dashboard</a>
+            <a th:href="@{/customer/rooms}">Browse Rooms</a>
+            <a th:href="@{/customer/bookings}">My Bookings</a>
+            <a th:href="@{/customer/payment}">Make Payment</a>
+            <a th:href="@{/customer/reviews}">My Reviews</a>
+            <a th:href="@{/customer/profile}" class="active">My Profile</a>
+            <span class="user-badge" th:text="${customer.name}">Customer Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 2rem;">
+            <!-- Left Side: Profile Summary & Loyalty Points -->
+            <div>
+                <div class="panel glass-card" style="padding: 2rem; border-top: 3px solid var(--primary); text-align: center;">
+                    <div style="background: rgba(197, 168, 128, 0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border: 1px solid rgba(197, 168, 128, 0.25);">
+                        <span style="font-size: 2rem; color: var(--primary);">💎</span>
+                    </div>
+                    <h3 th:text="${customer.name}" style="font-size: 1.4rem;">Customer Name</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;" th:text="${customer.email}">customer@example.com</p>
+                    
+                    <div style="border-top: 1px solid var(--card-border); padding-top: 1.2rem; margin-top: 1.5rem; text-align: left; display: flex; flex-direction: column; gap: 0.8rem;">
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">User ID</span>
+                            <span style="font-weight: 600;" th:text="${customer.userId}">U002</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Phone Number</span>
+                            <span style="font-weight: 600;" th:text="${customer.phoneNumber}">Unknown</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Loyalty Point Balance</span>
+                            <span style="font-weight: 700; color: var(--primary);" th:text="${customer.loyaltyPoints} + ' Points'">120 Points</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Total Invested Stays</span>
+                            <span style="font-weight: 700; color: var(--success);" th:text="'LKR ' + ${totalSpent}">LKR 0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Edit Profile Form -->
+            <div>
+                <div class="panel">
+                    <h2>Edit Profile Details</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Modify contact display name, phone, or update security credentials. Fields left blank will remain unchanged.
+                    </p>
+                    
+                    <form th:action="@{/customer/profile}" method="POST">
+                        <div class="form-group">
+                            <label for="name">Display Name</label>
+                            <input type="text" id="name" name="name" class="form-control" th:value="${customer.name}" placeholder="Enter new name...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" name="phone" class="form-control" th:value="${customer.phoneNumber}" placeholder="Enter contact phone...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Change Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter new secure password (min 6 chars)...">
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="margin-top: 1.5rem; width: auto; padding: 0.8rem 2rem;">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Invoice History -->
+        <div class="panel" style="margin-top: 2rem;">
+            <h2>Financial Transactions Ledger</h2>
+            <div th:if="${payments.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                No financial transactions recorded under your account.
+            </div>
+            <table th:if="${!payments.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Booking ID</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${payments}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${p.paymentId}">P001</td>
+                        <td th:text="${p.bookingId}">B001</td>
+                        <td style="font-weight: 600;" th:text="'LKR ' + ${p.amount}">LKR 100.00</td>
+                        <td th:text="${p.paymentMethod}">CARD</td>
+                        <td>
+                            <span class="badge" th:classappend="${p.status == 'PAID' ? 'badge-success' : (p.status == 'REFUNDED' ? 'badge-danger' : 'badge-pending')}" th:text="${p.status}">PAID</span>
+                        </td>
+                        <td th:text="${p.paymentDate}">2026-05-18</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

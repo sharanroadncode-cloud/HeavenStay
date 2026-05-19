@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Premium Rooms | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span></h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/customer/dashboard}">Dashboard</a>
+            <a th:href="@{/customer/rooms}" class="active">Browse Rooms</a>
+            <a th:href="@{/customer/bookings}">My Bookings</a>
+            <a th:href="@{/customer/payment}">Make Payment</a>
+            <a th:href="@{/customer/reviews}">My Reviews</a>
+            <a th:href="@{/customer/profile}">My Profile</a>
+            <span class="user-badge" th:text="${customer.name}">Customer Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Our Premium Rooms & Suites</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+                Browse our selection of elegant and comfortable suites. Complete with king beds, premium views, and fast high-speed Wi-Fi.
+            </p>
+            
+            <!-- Filters -->
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <span style="color: var(--text-muted); align-self: center;">Type Filter:</span>
+                <a th:href="@{/customer/rooms}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == null ? 'active' : ''}">All Available</a>
+                <a th:href="@{/customer/rooms(type='SINGLE')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'SINGLE' ? 'active' : ''}">Single</a>
+                <a th:href="@{/customer/rooms(type='DOUBLE')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'DOUBLE' ? 'active' : ''}">Double</a>
+                <a th:href="@{/customer/rooms(type='DELUXE')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'DELUXE' ? 'active' : ''}">Deluxe</a>
+                <a th:href="@{/customer/rooms(type='SUITE')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'SUITE' ? 'active' : ''}">Luxury Suites</a>
+            </div>
+        </div>
+
+        <!-- Rooms Grid -->
+        <div class="dashboard-grid">
+            <div th:each="r : ${rooms}" class="stat-card glass-card" style="padding: 2rem; justify-content: space-between; height: 350px;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span class="badge badge-success" th:text="${r.type}">SINGLE</span>
+                        <strong style="color: var(--primary); font-size: 1.2rem;" th:text="'LKR ' + ${r.pricePerNight} + '/night'">LKR 50/night</strong>
+                    </div>
+                    <h3 style="font-size: 1.4rem; color: var(--text-main); text-transform: none; letter-spacing: normal;" th:text="'Room ' + ${r.roomNumber}">Room 101</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.8rem; line-height: 1.4;" th:text="${r.description}">Cozy single room with pool views.</p>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <a th:href="@{/customer/booking/new(roomNumber=${r.roomNumber})}" class="btn-primary" style="padding: 0.7rem; font-size: 0.9rem;">Book Room Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

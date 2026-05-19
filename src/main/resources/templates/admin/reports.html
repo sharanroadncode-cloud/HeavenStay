@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>System Reports | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}">All Bookings</a>
+            <a th:href="@{/admin/staff}">Staff Management</a>
+            <a th:href="@{/admin/reports}" class="active">System Reports</a>
+            <a th:href="@{/admin/revenue}">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Heaven Stay Executive Report</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+                Consolidated system operations audit log. Overview of inventory volume, staff allocations, and booking performance logs.
+            </p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="dashboard-grid">
+            <div class="stat-card" style="background: rgba(197, 168, 128, 0.05);">
+                <h3>Total Inventory Value</h3>
+                <div class="value" th:text="'LKR ' + ${totalRevenue}">LKR 0.00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total reservations</h3>
+                <div class="value" th:text="${totalBookings}">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Guests</h3>
+                <div class="value" th:text="${confirmed}">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Completed stays</h3>
+                <div class="value" th:text="${completed}">0</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Left Side: Room Inventory Status -->
+            <div class="panel">
+                <h2>Room Distribution Status</h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span>Total Registered Rooms</span>
+                        <strong th:text="${totalRooms}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span style="color: var(--success);">Available Rooms</span>
+                        <strong th:text="${available}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span style="color: var(--info);">Occupied / Booked</span>
+                        <strong th:text="${booked}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span style="color: var(--warning);">Housekeeping Cleaning</span>
+                        <strong th:text="${cleaning}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+                        <span style="color: var(--danger);">Out of Order (Maintenance)</span>
+                        <strong th:text="${maintenance}">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: User Configurations -->
+            <div class="panel">
+                <h2>System Accounts Matrix</h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span>Total Users Database</span>
+                        <strong th:text="${totalUsers}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span>Administrator Accounts</span>
+                        <strong th:text="${admins}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                        <span>Front Desk Receptionists</span>
+                        <strong th:text="${receptionists}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 0.5rem;">
+                        <span>Registered Customers</span>
+                        <strong th:text="${customers}">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Rooms and Booking list splits -->
+        <div class="panel" style="margin-top: 2rem;">
+            <h2>Full Stay Logs Overview</h2>
+            <div th:if="${bookings.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                No guest reservations recorded in logs yet.
+            </div>
+            <table th:if="${!bookings.isEmpty()}" style="margin-top: 1rem;">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer ID</th>
+                        <th>Room Number</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Nights</th>
+                        <th>Price Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="b : ${bookings}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${b.bookingId}">B001</td>
+                        <td th:text="${b.customerId}">U002</td>
+                        <td th:text="${b.roomNumber}">101</td>
+                        <td th:text="${b.checkInDate}">2026-05-18</td>
+                        <td th:text="${b.checkOutDate}">2026-05-20</td>
+                        <td th:text="${b.nights}">2</td>
+                        <td th:text="'LKR ' + ${b.totalPrice}">LKR 200.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'badge-success' : (b.status == 'CANCELLED' ? 'badge-danger' : 'badge-info')}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
