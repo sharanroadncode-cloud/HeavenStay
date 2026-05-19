@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Bookings | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span></h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/customer/dashboard}">Dashboard</a>
+            <a th:href="@{/customer/rooms}">Browse Rooms</a>
+            <a th:href="@{/customer/bookings}" class="active">My Bookings</a>
+            <a th:href="@{/customer/payment}">Make Payment</a>
+            <a th:href="@{/customer/reviews}">My Reviews</a>
+            <a th:href="@{/customer/profile}">My Profile</a>
+            <span class="user-badge" th:text="${customer.name}">Customer Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="panel">
+            <h2>My Reservation Log Book</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+                Here you can find all your past, present, and upcoming stays. Click details to see invoices and checkout details.
+            </p>
+
+            <table style="margin-top: 2rem;">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Room Number</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Nights</th>
+                        <th>Total Cost</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${bookings.isEmpty()}">
+                        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem 0;">You have no reservations logged under your account.</td>
+                    </tr>
+                    <tr th:each="b, iter : ${bookings}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${b.bookingId}">B001</td>
+                        <td th:text="${b.roomNumber}">101</td>
+                        <td th:text="${b.checkInDate}">2026-05-18</td>
+                        <td th:text="${b.checkOutDate}">2026-05-20</td>
+                        <td th:text="${b.nights}">2</td>
+                        <td style="font-weight: 600;" th:text="'LKR ' + ${b.totalPrice}">LKR 100.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'badge-success' : (b.status == 'CANCELLED' ? 'badge-danger' : 'badge-info')}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${paidStatus[iter.index] ? 'badge-success' : 'badge-pending'}" th:text="${paidStatus[iter.index] ? 'PAID' : 'PENDING'}">PENDING</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 0.5rem; justify-content: flex-end;">
+                                <a th:href="@{/customer/booking/{id}(id=${b.bookingId})}" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; margin-top: 0;">Details</a>
+                                <a th:if="${!paidStatus[iter.index] && b.status == 'CONFIRMED'}" th:href="@{/customer/payment(bookingId=${b.bookingId})}" class="btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; background: var(--success); color: #fff;">Pay</a>
+                                <form th:if="${b.status == 'CONFIRMED'}" th:action="@{/customer/cancel/{id}(id=${b.bookingId})}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?');" style="display:inline;">
+                                    <button type="submit" class="btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--danger); color: #fff; width: auto;">Cancel</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

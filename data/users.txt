@@ -1,0 +1,4 @@
+U001|Super Admin|nilaksiga23@gmail.com|123456|ADMIN|SUPER
+U002|Sharan|yathu28yathu@gmail.com|123456|CUSTOMER|703142052|0
+U003|Receptionist Sharan|sharan.roadncode@gmail.com|123456|RECEPTIONIST|MORNING
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Bookings | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}" class="active">All Bookings</a>
+            <a th:href="@{/admin/staff}">Staff Management</a>
+            <a th:href="@{/admin/reports}">System Reports</a>
+            <a th:href="@{/admin/revenue}">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="panel">
+            <h2>System Reservations Logs</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+                Audit log of all registered stay reservations. Track booking states and active guest floor allocations.
+            </p>
+
+            <!-- Filters -->
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <span style="color: var(--text-muted); align-self: center;">Filter:</span>
+                <a th:href="@{/admin/bookings}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == null ? 'active' : ''}">All Bookings</a>
+                <a th:href="@{/admin/bookings(filter='active')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'active' ? 'active' : ''}">Active Stays Only</a>
+            </div>
+
+            <table style="margin-top: 2rem;">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer ID</th>
+                        <th>Room Number</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Nights</th>
+                        <th>Price Total</th>
+                        <th>Booking Status</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${bookings.isEmpty()}">
+                        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem 0;">No reservations found in logs.</td>
+                    </tr>
+                    <tr th:each="b : ${bookings}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${b.bookingId}">B001</td>
+                        <td th:text="${b.customerId}">U002</td>
+                        <td th:text="${b.roomNumber}">101</td>
+                        <td th:text="${b.checkInDate}">2026-05-18</td>
+                        <td th:text="${b.checkOutDate}">2026-05-20</td>
+                        <td th:text="${b.nights}">2</td>
+                        <td th:text="'LKR ' + ${b.totalPrice}">LKR 200.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'badge-success' : (b.status == 'CANCELLED' ? 'badge-danger' : 'badge-info')}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                        <td th:text="${b.createdDateStr}">2026-05-18</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

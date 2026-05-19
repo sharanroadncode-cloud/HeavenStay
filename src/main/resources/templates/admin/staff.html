@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff Management | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}">All Bookings</a>
+            <a th:href="@{/admin/staff}" class="active">Staff Management</a>
+            <a th:href="@{/admin/reports}">System Reports</a>
+            <a th:href="@{/admin/revenue}">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Left Side: Staff Accounts -->
+            <div>
+                <div class="panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Staff Configurations</h2>
+                        <a th:href="@{/admin/staff/add}" class="btn-primary" style="padding: 0.5rem 1rem; width: auto; font-size: 0.85rem;">Add Staff</a>
+                    </div>
+
+                    <table style="margin-top: 1rem;">
+                        <thead>
+                            <tr>
+                                <th>Staff ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${staff}">
+                                <td style="font-weight: 600; color: var(--primary);" th:text="${s.userId}">U001</td>
+                                <td th:text="${s.name}">Name</td>
+                                <td th:text="${s.email}">email@heavenstay.com</td>
+                                <td>
+                                    <span class="badge" th:classappend="${s.role == 'ADMIN' ? 'badge-success' : 'badge-info'}" th:text="${s.role}">ADMIN</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <form th:if="${admin.userId != s.userId}" th:action="@{/admin/staff/delete}" method="POST" onsubmit="return confirm('Are you sure you want to delete this staff member?');" style="display: inline;">
+                                        <input type="hidden" name="userId" th:value="${s.userId}">
+                                        <button type="submit" class="btn-primary" style="background: var(--danger); color: #fff; padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; display: inline-block;">Delete</button>
+                                    </form>
+                                    <span th:if="${admin.userId == s.userId}" style="font-size: 0.8rem; color: var(--text-muted);">Active (You)</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Side: Customer Registry -->
+            <div>
+                <div class="panel">
+                    <h2>Customer Database</h2>
+                    <table style="margin-top: 1.5rem;">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${customers.isEmpty()}">
+                                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem 0;">No registered customers in the system yet.</td>
+                            </tr>
+                            <tr th:each="c : ${customers}">
+                                <td style="font-weight: 600; color: var(--primary);" th:text="${c.userId}">U002</td>
+                                <td th:text="${c.name}">Customer Name</td>
+                                <td th:text="${c.email}">cust@example.com</td>
+                                <td th:text="${c.phoneNumber}">Phone</td>
+                                <td style="text-align: right;">
+                                    <form th:action="@{/admin/customer/delete}" method="POST" onsubmit="return confirm('Are you sure you want to delete this customer?');" style="display: inline;">
+                                        <input type="hidden" name="userId" th:value="${c.userId}">
+                                        <button type="submit" class="btn-primary" style="background: var(--danger); color: #fff; padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; display: inline-block;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

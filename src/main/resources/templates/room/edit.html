@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Room | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Rooms</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Room Inventory</a>
+            <a th:href="@{/rooms/edit/{num}(num=${room.roomNumber})}" class="active">Edit Room</a>
+            <span class="user-badge" th:text="${user.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="auth-wrapper">
+        <div class="auth-card glass-card" style="max-width: 600px;">
+            <div class="brand">
+                <h1>Edit Room: <span th:text="${room.roomNumber}">101</span></h1>
+                <p>Modify specifications and control availability status.</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <form th:action="@{/rooms/update}" method="POST">
+                <input type="hidden" name="roomNumber" th:value="${room.roomNumber}">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="roomNumberDisplay">Room Number</label>
+                        <input type="text" id="roomNumberDisplay" class="form-control" th:value="${room.roomNumber}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Room Type</label>
+                        <select id="type" name="type" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                            <option value="SINGLE" th:selected="${room.type == 'SINGLE'}">SINGLE</option>
+                            <option value="DOUBLE" th:selected="${room.type == 'DOUBLE'}">DOUBLE</option>
+                            <option value="DELUXE" th:selected="${room.type == 'DELUXE'}">DELUXE</option>
+                            <option value="SUITE" th:selected="${room.type == 'SUITE'}">SUITE</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="pricePerNight">Price Per Night (LKR)</label>
+                        <input type="number" id="pricePerNight" name="pricePerNight" step="0.01" class="form-control" th:value="${room.pricePerNight}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="floorNumber">Floor Number</label>
+                        <input type="number" id="floorNumber" name="floorNumber" class="form-control" th:value="${room.floorNumber}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Room Status</label>
+                    <select id="status" name="status" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                        <option value="AVAILABLE" th:selected="${room.status == 'AVAILABLE'}">AVAILABLE</option>
+                        <option value="BOOKED" th:selected="${room.status == 'BOOKED'}">BOOKED</option>
+                        <option value="CLEANING" th:selected="${room.status == 'CLEANING'}">CLEANING</option>
+                        <option value="MAINTENANCE" th:selected="${room.status == 'MAINTENANCE'}">MAINTENANCE</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" th:text="${room.description}" required></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <a th:href="@{/rooms}" class="btn-secondary" style="margin-top: 0;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
