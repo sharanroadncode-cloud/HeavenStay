@@ -1,0 +1,5 @@
+U001|Super Admin|heavenstayhotel2026@gmail.com|admin123|ADMIN|SUPER
+U002|Sharan|sharan.roadncode@gmail.com|112233|CUSTOMER|703142052|0
+U003|Receptionist Alice|palaraam2003@gmail.com|reception123|RECEPTIONIST|MORNING
+U004|Maheshwaran Yathuvigaash|yathu28yathu@gmail.com|000000|CUSTOMER|0763042452|5055
+U005|Joe|mrextraction28@gmail.com|222222|CUSTOMER|0763042452|0

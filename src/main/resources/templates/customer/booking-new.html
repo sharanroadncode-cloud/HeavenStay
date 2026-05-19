@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Booking | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span></h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/customer/dashboard}">Dashboard</a>
+            <a th:href="@{/customer/rooms}">Browse Rooms</a>
+            <a th:href="@{/customer/booking/new}" class="active">Book a Room</a>
+            <a th:href="@{/customer/bookings}">My Bookings</a>
+            <a th:href="@{/customer/payment}">Make Payment</a>
+            <a th:href="@{/customer/reviews}">My Reviews</a>
+            <a th:href="@{/customer/profile}">My Profile</a>
+            <span class="user-badge" th:text="${customer.name}">Customer Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="auth-wrapper" style="padding: 0; min-height: auto;">
+            <div class="auth-card glass-card" style="max-width: 600px; width: 100%;">
+                <div class="brand">
+                    <h1>Book a Luxury <span>Stay</span></h1>
+                    <p>Enter dates and secure your reservation immediately.</p>
+                </div>
+
+                <form th:action="@{/customer/booking}" method="POST">
+                    <div class="form-group">
+                        <label for="roomNumber">Select Your Room</label>
+                        <select id="roomNumber" name="roomNumber" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                            <option value="" disabled th:selected="${selectedRoom == null}">-- Select Room --</option>
+                            <option th:each="r : ${availableRooms}" th:value="${r.roomNumber}" th:selected="${r.roomNumber == selectedRoom}" th:text="'Room ' + ${r.roomNumber} + ' (' + ${r.type} + ' - LKR' + ${r.pricePerNight} + '/night)'"></option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="checkIn">Check-In Date</label>
+                            <input type="date" id="checkIn" name="checkIn" class="form-control" th:value="${today}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkOut">Check-Out Date</label>
+                            <input type="date" id="checkOut" name="checkOut" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn-primary">Confirm Reservation</button>
+                        <a th:href="@{/customer/rooms}" class="btn-secondary" style="margin-top: 0;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

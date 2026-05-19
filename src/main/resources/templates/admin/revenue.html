@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Revenue & Payments | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}">All Bookings</a>
+            <a th:href="@{/admin/staff}">Staff Management</a>
+            <a th:href="@{/admin/reports}">System Reports</a>
+            <a th:href="@{/admin/revenue}" class="active">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Revenue Audit Log Ledger</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+                Consolidated financials ledger. Auditor reports showing revenue aggregates grouped by collection method.
+            </p>
+        </div>
+
+        <!-- Financial Splitting Cards -->
+        <div class="dashboard-grid">
+            <div class="stat-card" style="border-top: 3px solid var(--primary);">
+                <h3>Gross Revenue</h3>
+                <div class="value" th:text="'LKR ' + ${totalRevenue}">LKR 0.00</div>
+            </div>
+            <div class="stat-card" style="border-top: 3px solid #34d399;">
+                <h3>Cash Collection</h3>
+                <div class="value" style="color: #34d399;" th:text="'LKR ' + ${cashRevenue}">LKR 0.00</div>
+            </div>
+            <div class="stat-card" style="border-top: 3px solid #60a5fa;">
+                <h3>Card Inflow</h3>
+                <div class="value" style="color: #60a5fa;" th:text="'LKR ' + ${cardRevenue}">LKR 0.00</div>
+            </div>
+            <div class="stat-card" style="border-top: 3px solid #fbbf24;">
+                <h3>Online Transfers</h3>
+                <div class="value" style="color: #fbbf24;" th:text="'LKR ' + ${onlineRevenue}">LKR 0.00</div>
+            </div>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="panel">
+            <h2>All Collected Transactions Ledger</h2>
+            <div th:if="${payments.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                No payment transactions recorded in ledger logs yet.
+            </div>
+            <table th:if="${!payments.isEmpty()}" style="margin-top: 1rem;">
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Booking ID</th>
+                        <th>Customer ID</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${payments}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${p.paymentId}">P001</td>
+                        <td th:text="${p.bookingId}">B001</td>
+                        <td th:text="${p.customerId}">U002</td>
+                        <td style="font-weight: 500;" th:text="'LKR ' + ${p.amount}">LKR 100.00</td>
+                        <td th:text="${p.paymentMethod}">CASH</td>
+                        <td>
+                            <span class="badge" th:classappend="${p.status == 'PAID' ? 'badge-success' : (p.status == 'REFUNDED' ? 'badge-danger' : 'badge-pending')}" th:text="${p.status}">PAID</span>
+                        </td>
+                        <td th:text="${p.paymentDate}">2026-05-18</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

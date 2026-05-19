@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Staff Member | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}">All Bookings</a>
+            <a th:href="@{/admin/staff}" class="active">Staff Management</a>
+            <a th:href="@{/admin/reports}">System Reports</a>
+            <a th:href="@{/admin/revenue}">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="auth-wrapper">
+        <div class="auth-card glass-card" style="max-width: 600px;">
+            <div class="brand">
+                <h1>Add Staff <span>Member</span></h1>
+                <p>Register a new elite employee into Heaven Stay workforce.</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <form th:action="@{/admin/staff}" method="POST">
+                <div class="form-group">
+                    <label for="role">Staff Role</label>
+                    <select id="role" name="role" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required onchange="toggleExtraFields()">
+                        <option value="RECEPTIONIST" th:selected="${roleHint == 'RECEPTIONIST'}">RECEPTIONIST</option>
+                        <option value="ADMIN" th:selected="${roleHint == 'ADMIN'}">ADMINISTRATOR</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="e.g. John Doe" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="e.g. john@heavenstay.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <!-- Receptionist shift selection -->
+                <div id="receptionistFields" class="form-group">
+                    <label for="shift">Shift Time</label>
+                    <select id="shift" name="shift" class="form-control" style="background: rgba(15, 16, 22, 0.9);">
+                        <option value="MORNING">MORNING SHIFT</option>
+                        <option value="EVENING">EVENING SHIFT</option>
+                        <option value="NIGHT">NIGHT SHIFT</option>
+                    </select>
+                </div>
+
+                <!-- Admin level selection -->
+                <div id="adminFields" class="form-group" style="display: none;">
+                    <label for="adminLevel">Administrator Level</label>
+                    <select id="adminLevel" name="adminLevel" class="form-control" style="background: rgba(15, 16, 22, 0.9);">
+                        <option value="REGULAR">REGULAR ADMIN</option>
+                        <option value="SUPER">SUPER ADMIN</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn-primary">Register Account</button>
+                    <a th:href="@{/admin/staff}" class="btn-secondary" style="margin-top: 0;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleExtraFields() {
+            var role = document.getElementById("role").value;
+            var rFields = document.getElementById("receptionistFields");
+            var aFields = document.getElementById("adminFields");
+            
+            if (role === "ADMIN") {
+                rFields.style.display = "none";
+                aFields.style.display = "block";
+            } else {
+                rFields.style.display = "block";
+                aFields.style.display = "none";
+            }
+        }
+        
+        // Initial run
+        window.onload = toggleExtraFields;
+    </script>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
