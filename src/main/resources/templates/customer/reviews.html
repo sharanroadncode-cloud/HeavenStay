@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Reviews | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span></h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/customer/dashboard}">Dashboard</a>
+            <a th:href="@{/customer/rooms}">Browse Rooms</a>
+            <a th:href="@{/customer/bookings}">My Bookings</a>
+            <a th:href="@{/customer/payment}">Make Payment</a>
+            <a th:href="@{/customer/reviews}" class="active">My Reviews</a>
+            <a th:href="@{/customer/profile}">My Profile</a>
+            <span class="user-badge" th:text="${customer.name}">Customer Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 2rem;">
+            <!-- Left Side: Submit New Review Form -->
+            <div>
+                <div class="panel glass-card" style="padding: 2rem;">
+                    <h2>Review a Stay</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Select a completed stay reservation from the dropdown below to share your experience.
+                    </p>
+
+                    <div th:if="${reviewableBookings.isEmpty()}">
+                        <p style="color: var(--text-muted); font-size: 0.95rem; border-top: 1px solid var(--card-border); padding-top: 1.5rem;">
+                            No completed stays are currently awaiting a review. Reviews can only be left for COMPLETED stays.
+                        </p>
+                    </div>
+
+                    <form th:if="${!reviewableBookings.isEmpty()}" th:action="@{/customer/review}" method="POST">
+                        <div class="form-group">
+                            <label for="bookingId">Select Completed stay</label>
+                            <select id="bookingId" name="bookingId" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="" disabled selected>-- Select Stay --</option>
+                                <option th:each="rb : ${reviewableBookings}" th:value="${rb.bookingId}" th:text="'Stay ID: ' + ${rb.bookingId} + ' | Room ' + ${rb.roomNumber} + ' (' + ${rb.checkInDate} + ' to ' + ${rb.checkOutDate} + ')'"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rating">Star Rating</label>
+                            <select id="rating" name="rating" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="5">★★★★★ (5 Stars)</option>
+                                <option value="4">★★★★☆ (4 Stars)</option>
+                                <option value="3">★★★☆☆ (3 Stars)</option>
+                                <option value="2">★★☆☆☆ (2 Stars)</option>
+                                <option value="1">★☆☆☆☆ (1 Star)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment">Feedback Comment</label>
+                            <textarea id="comment" name="comment" class="form-control" rows="4" placeholder="Share your experience (views, luxury levels, service accuracy)..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="margin-top: 1rem;">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Past Reviews Overview -->
+            <div>
+                <div class="panel">
+                    <h2>My Feedback logs</h2>
+                    <div th:if="${myReviews.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                        You have not posted any feedback comments yet.
+                    </div>
+                    
+                    <div th:if="${!myReviews.isEmpty()}" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem;">
+                        <div th:each="mr : ${myReviews}" style="border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <strong style="color: var(--primary);" th:text="'Stay ID: ' + ${mr.bookingId} + ' | Room ' + ${mr.roomNumber}">Room 101</strong>
+                                <span style="color: var(--warning);" th:text="${#strings.repeat('★', mr.rating)}">★★★★★</span>
+                            </div>
+                            <p style="font-size: 0.95rem; line-height: 1.4;" th:text="${mr.comment}">Feedback details...</p>
+                            <span style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;" th:text="'Posted on: ' + ${mr.reviewDate}">2026-05-18</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

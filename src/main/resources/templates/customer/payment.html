@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Make Payment | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span></h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/customer/dashboard}">Dashboard</a>
+            <a th:href="@{/customer/rooms}">Browse Rooms</a>
+            <a th:href="@{/customer/bookings}">My Bookings</a>
+            <a th:href="@{/customer/payment}" class="active">Make Payment</a>
+            <a th:href="@{/customer/reviews}">My Reviews</a>
+            <a th:href="@{/customer/profile}">My Profile</a>
+            <span class="user-badge" th:text="${customer.name}">Customer Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <!-- Left Side: Payment Selection Form -->
+            <div>
+                <div class="panel glass-card" style="padding: 2rem;">
+                    <h2>Process Invoice Payment</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Select your reservation stay and record the payment method to secure confirmation.
+                    </p>
+
+                    <form th:action="@{/customer/payment}" method="POST">
+                        <div class="form-group">
+                            <label for="bookingId">Select Booking Invoice</label>
+                            <select id="bookingId" name="bookingId" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="" disabled th:selected="${selectedBooking == null}">-- Select Stay --</option>
+                                <option th:each="ub : ${unpaidBookings}" th:value="${ub.bookingId}" th:selected="${selectedBooking != null && ub.bookingId == selectedBooking.bookingId}" th:text="'Stay ID: ' + ${ub.bookingId} + ' | Room ' + ${ub.roomNumber} + ' | Total LKR ' + ${ub.totalPrice}"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentMethod">Choose Payment Method</label>
+                            <select id="paymentMethod" name="paymentMethod" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="CARD">CREDIT / DEBIT CARD</option>
+                                <option value="ONLINE">ONLINE BANKING TRANSFER</option>
+                                <option value="CASH">PAY ON CHECK-IN (CASH)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="margin-top: 1rem;">Process Transaction</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Pending Payments Overview -->
+            <div>
+                <div class="panel">
+                    <h2>Outstanding Stays Due</h2>
+                    <div th:if="${unpaidBookings.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                        Excellent! You have no pending stays due for payment. All active reservations paid.
+                    </div>
+                    <table th:if="${!unpaidBookings.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Room Number</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Nights</th>
+                                <th>Price Due</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ub : ${unpaidBookings}">
+                                <td style="font-weight: 600; color: var(--primary);" th:text="${ub.bookingId}">B001</td>
+                                <td th:text="${ub.roomNumber}">101</td>
+                                <td th:text="${ub.checkInDate}">2026-05-18</td>
+                                <td th:text="${ub.checkOutDate}">2026-05-20</td>
+                                <td th:text="${ub.nights}">2</td>
+                                <td style="font-weight: 600;" th:text="'LKR ' + ${ub.totalPrice}">LKR 100.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
