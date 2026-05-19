@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Bookings | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Front Desk</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/reception/dashboard}">Dashboard</a>
+            <a th:href="@{/reception/checkin}">Check-In Guest</a>
+            <a th:href="@{/reception/checkout}">Check-Out Guest</a>
+            <a th:href="@{/reception/walkin}">Walk-In Booking</a>
+            <a th:href="@{/reception/rooms}">Room Statuses</a>
+            <a th:href="@{/reception/bookings}" class="active">All Bookings</a>
+            <a th:href="@{/reception/payment}">Collect Payment</a>
+            <a th:href="@{/reception/customer-lookup}">Customer Lookup</a>
+            <span class="user-badge" th:text="${receptionist.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <h2>All Bookings & Reservations</h2>
+                
+                <!-- Search Form -->
+                <form th:action="@{/reception/bookings}" method="GET" style="display: flex; gap: 0.5rem; max-width: 400px; width: 100%;">
+                    <input type="text" name="search" class="form-control" placeholder="Search customer ID or Booking ID..." th:value="${search}" style="padding: 0.5rem 1rem; margin-bottom: 0;">
+                    <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; width: auto; margin-top: 0;">Search</button>
+                </form>
+            </div>
+
+            <!-- Filters -->
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                <span style="color: var(--text-muted); align-self: center;">Filter:</span>
+                <a th:href="@{/reception/bookings}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == null ? 'active' : ''}">All Stays</a>
+                <a th:href="@{/reception/bookings(filter='active')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'active' ? 'active' : ''}">Active / Confirmed</a>
+            </div>
+
+            <table style="margin-top: 2rem;">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer ID</th>
+                        <th>Room</th>
+                        <th>Check-In</th>
+                        <th>Check-Out</th>
+                        <th>Nights</th>
+                        <th>Total Cost</th>
+                        <th>Status</th>
+                        <th>Date Booked</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${bookings.isEmpty()}">
+                        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem 0;">
+                            No matching reservations found in logs.
+                        </td>
+                    </tr>
+                    <tr th:each="b : ${bookings}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${b.bookingId}">B001</td>
+                        <td th:text="${b.customerId}">U002</td>
+                        <td th:text="${b.roomNumber}">101</td>
+                        <td th:text="${b.checkInDate}">2026-05-18</td>
+                        <td th:text="${b.checkOutDate}">2026-05-20</td>
+                        <td th:text="${b.nights}">2</td>
+                        <td th:text="'LKR ' + ${b.totalPrice}">LKR 100.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'badge-success' : (b.status == 'CANCELLED' ? 'badge-danger' : (b.status == 'COMPLETED' ? 'badge-info' : 'badge-pending'))}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                        <td th:text="${b.createdDateStr}">2026-05-18</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

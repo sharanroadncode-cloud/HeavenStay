@@ -1,0 +1,5 @@
+101|SINGLE|3500.0|AVAILABLE|1|Cozy single room with garden view
+102|SINGLE|5000.0|AVAILABLE|1|Single room with pool view
+201|DOUBLE|8000.0|AVAILABLE|2|Double room with balcony
+301|DELUXE|10000.0|AVAILABLE|3|Deluxe room with king bed
+401|SUITE|15000.0|AVAILABLE|4|Luxury suite with jacuzzi

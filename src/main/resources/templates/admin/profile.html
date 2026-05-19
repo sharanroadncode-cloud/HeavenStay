@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}">All Bookings</a>
+            <a th:href="@{/admin/staff}">Staff Management</a>
+            <a th:href="@{/admin/reports}">System Reports</a>
+            <a th:href="@{/admin/revenue}">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}" class="active">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 2rem;">
+            <!-- Left Side: Profile Summary -->
+            <div>
+                <div class="panel glass-card" style="padding: 2rem; border-top: 3px solid var(--primary); text-align: center;">
+                    <div style="background: rgba(197, 168, 128, 0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border: 1px solid rgba(197, 168, 128, 0.25);">
+                        <span style="font-size: 2rem; color: var(--primary);">⚙️</span>
+                    </div>
+                    <h3 th:text="${admin.name}" style="font-size: 1.4rem;">Admin Name</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;" th:text="${admin.email}">admin@heavenstay.com</p>
+                    
+                    <div style="border-top: 1px solid var(--card-border); padding-top: 1.2rem; margin-top: 1.5rem; text-align: left; display: flex; flex-direction: column; gap: 0.8rem;">
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">User ID</span>
+                            <span style="font-weight: 600;" th:text="${admin.userId}">U001</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">System Role</span>
+                            <span style="font-weight: 600;" th:text="${admin.role}">ADMIN</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Access Rank</span>
+                            <span style="font-weight: 600; color: var(--primary);" th:text="${admin.adminLevel}">SUPER</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Edit Profile Form -->
+            <div>
+                <div class="panel">
+                    <h2>Edit Security Profile</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Modify display name or update password credentials. Fields left blank will remain unchanged.
+                    </p>
+                    
+                    <form th:action="@{/admin/profile}" method="POST">
+                        <div class="form-group">
+                            <label for="name">Display Name</label>
+                            <input type="text" id="name" name="name" class="form-control" th:value="${admin.name}" placeholder="Enter new name...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Change Password</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter new secure password (min 6 chars)...">
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="margin-top: 1.5rem; width: auto; padding: 0.8rem 2rem;">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
