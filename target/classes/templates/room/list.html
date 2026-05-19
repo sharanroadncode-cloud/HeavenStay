@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Inventory | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Rooms</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="${isAdmin ? '/admin/dashboard' : '/reception/dashboard'}">Dashboard</a>
+            <a th:href="@{/rooms}" class="active">Room Inventory</a>
+            <a th:if="${isAdmin}" th:href="@{/rooms/add}">Add New Room</a>
+            <span class="user-badge" th:text="${user.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <h2>Room Inventory & Mappings</h2>
+                <div th:if="${isAdmin}">
+                    <a th:href="@{/rooms/add}" class="btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">Add New Room</a>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <span style="color: var(--text-muted); align-self: center;">Filter:</span>
+                <a th:href="@{/rooms}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == null ? 'active' : ''}">All Rooms</a>
+                <a th:href="@{/rooms(status='AVAILABLE')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'AVAILABLE' ? 'active' : ''}">Available</a>
+                <a th:href="@{/rooms(status='BOOKED')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'BOOKED' ? 'active' : ''}">Booked</a>
+                <a th:href="@{/rooms(status='CLEANING')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'CLEANING' ? 'active' : ''}">Cleaning</a>
+                <a th:href="@{/rooms(status='MAINTENANCE')}" class="btn-secondary" style="padding: 0.4rem 1rem; width: auto;" th:classappend="${filter == 'MAINTENANCE' ? 'active' : ''}">Maintenance</a>
+            </div>
+
+            <table style="margin-top: 2rem;">
+                <thead>
+                    <tr>
+                        <th>Room No.</th>
+                        <th>Type</th>
+                        <th>Floor</th>
+                        <th>Price/Night</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${rooms}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${r.roomNumber}">101</td>
+                        <td th:text="${r.type}">SINGLE</td>
+                        <td th:text="${r.floorNumber}">1</td>
+                        <td th:text="'LKR ' + ${r.pricePerNight}">LKR 50.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${r.status == 'AVAILABLE' ? 'badge-success' : (r.status == 'BOOKED' ? 'badge-info' : (r.status == 'CLEANING' ? 'badge-pending' : 'badge-danger'))}" th:text="${r.status}">AVAILABLE</span>
+                        </td>
+                        <td th:text="${r.description}" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Cozy single room</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 0.5rem; justify-content: flex-end;">
+                                <a th:href="@{/rooms/{num}(num=${r.roomNumber})}" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto;">Details & Reviews</a>
+                                <a th:if="${isAdmin}" th:href="@{/rooms/edit/{num}(num=${r.roomNumber})}" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; border-color: var(--primary); color: var(--primary); width: auto;">Edit</a>
+                                <form th:if="${isAdmin}" th:action="@{/rooms/delete}" method="POST" onsubmit="return confirm('Are you sure you want to delete this room?');" style="display:inline;">
+                                    <input type="hidden" name="roomNumber" th:value="${r.roomNumber}">
+                                    <button type="submit" class="btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--danger); color: #fff; width: auto;">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

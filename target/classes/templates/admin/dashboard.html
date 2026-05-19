@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Admin</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}" class="active">Dashboard</a>
+            <a th:href="@{/rooms}">Manage Rooms</a>
+            <a th:href="@{/admin/bookings}">All Bookings</a>
+            <a th:href="@{/admin/staff}">Staff Management</a>
+            <a th:href="@{/admin/reports}">System Reports</a>
+            <a th:href="@{/admin/revenue}">Revenue & Payments</a>
+            <a th:href="@{/admin/reviews}">All Reviews</a>
+            <a th:href="@{/admin/profile}">My Profile</a>
+            <span class="user-badge" th:text="${admin.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Welcoming Section -->
+        <div class="panel" style="margin-bottom: 2rem;">
+            <h2>System Overview & Control Panel</h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                Manage operations, verify revenues, and scale staff configurations for our premier luxury stay platform.
+            </p>
+        </div>
+
+        <!-- Quick Stats: Revenue and Volume -->
+        <div class="dashboard-grid">
+            <div class="stat-card" style="border-top: 3px solid var(--primary);">
+                <h3>Total Revenue</h3>
+                <div class="value" th:text="'LKR ' + ${totalRevenue}">LKR 0.00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Bookings</h3>
+                <div class="value" th:text="${totalBookings}">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Staff</h3>
+                <div class="value" th:text="${admins + receptionists}">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Customers</h3>
+                <div class="value" th:text="${customers}">0</div>
+            </div>
+        </div>
+
+        <!-- Room Inventory Overview -->
+        <div class="panel">
+            <h2>Room Occupancy Status</h2>
+            <div class="dashboard-grid" style="margin-top: 1rem; margin-bottom: 0;">
+                <div class="stat-card" style="background: rgba(16, 185, 129, 0.05);">
+                    <h3>Available Rooms</h3>
+                    <div class="value" style="color: #34d399;" th:text="${available}">0</div>
+                </div>
+                <div class="stat-card" style="background: rgba(59, 130, 246, 0.05);">
+                    <h3>Booked Rooms</h3>
+                    <div class="value" style="color: #60a5fa;" th:text="${booked}">0</div>
+                </div>
+                <div class="stat-card" style="background: rgba(245, 158, 11, 0.05);">
+                    <h3>Cleaning Rooms</h3>
+                    <div class="value" style="color: #fbbf24;" th:text="${cleaning}">0</div>
+                </div>
+                <div class="stat-card" style="background: rgba(239, 68, 68, 0.05);">
+                    <h3>Maintenance</h3>
+                    <div class="value" style="color: #f87171;" th:text="${maintenance}">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Management Actions -->
+        <div class="panel">
+            <h2>Administrative Operations</h2>
+            <div class="actions-grid">
+                <a th:href="@{/rooms/add}" class="btn-primary">Add New Room</a>
+                <a th:href="@{/admin/staff/add}" class="btn-secondary">Add Staff Member</a>
+                <a th:href="@{/admin/reports}" class="btn-secondary">System Statistics Report</a>
+                <a th:href="@{/admin/revenue}" class="btn-secondary">Revenue Detailed Split</a>
+            </div>
+        </div>
+
+        <!-- Recent bookings table -->
+        <div class="panel">
+            <h2>Recent Hotel Bookings</h2>
+            <div th:if="${recentBookings.isEmpty()}">
+                <p style="color: var(--text-muted); padding: 1rem 0;">No hotel reservations found in the logs.</p>
+            </div>
+            <table th:if="${!recentBookings.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer ID</th>
+                        <th>Room Number</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Nights</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="b : ${recentBookings}">
+                        <td th:text="${b.bookingId}">B001</td>
+                        <td th:text="${b.customerId}">U002</td>
+                        <td th:text="${b.roomNumber}">101</td>
+                        <td th:text="${b.checkInDate}">2026-05-18</td>
+                        <td th:text="${b.checkOutDate}">2026-05-20</td>
+                        <td th:text="${b.nights}">2</td>
+                        <td th:text="'LKR ' + ${b.totalPrice}">LKR 200.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'badge-success' : (b.status == 'CANCELLED' ? 'badge-danger' : 'badge-info')}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

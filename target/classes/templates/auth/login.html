@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card glass-card">
+            <div class="brand">
+                <h1>Heaven<span>Stay</span></h1>
+                <p>Welcome to luxury, peace, and comfort.</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <form th:action="@{/login}" method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+
+                    <div class="password-options">
+                        <label class="show-password">
+                            <input type="checkbox" onclick="togglePassword()">
+                            Show Password
+                        </label>
+
+                        <a th:href="@{/forgot-password}" class="forgot-link">Forgot Password?</a>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+            </form>
+
+            <div class="auth-links">
+                Don't have an account? <a th:href="@{/register}">Register here</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            passwordField.type = passwordField.type === "password" ? "text" : "password";
+        }
+    </script>
+</body>
+</html>

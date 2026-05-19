@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Room | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Rooms</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/rooms}">Room Inventory</a>
+            <a th:href="@{/rooms/add}" class="active">Add New Room</a>
+            <span class="user-badge" th:text="${user.name}">Admin Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="auth-wrapper">
+        <div class="auth-card glass-card" style="max-width: 600px;">
+            <div class="brand">
+                <h1>Add New <span>Room</span></h1>
+                <p>Register a premium luxury room to Heaven Stay inventory.</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+            <form th:action="@{/rooms/add}" method="POST">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="roomNumber">Room Number</label>
+                        <input type="text" id="roomNumber" name="roomNumber" class="form-control" placeholder="e.g. 101" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Room Type</label>
+                        <select id="type" name="type" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                            <option value="SINGLE">SINGLE</option>
+                            <option value="DOUBLE">DOUBLE</option>
+                            <option value="DELUXE">DELUXE</option>
+                            <option value="SUITE">SUITE</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="pricePerNight">Price Per Night (LKR)</label>
+                        <input type="number" id="pricePerNight" name="pricePerNight" step="0.01" class="form-control" placeholder="e.g. 150.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="floorNumber">Floor Number</label>
+                        <input type="number" id="floorNumber" name="floorNumber" class="form-control" placeholder="e.g. 1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" placeholder="Describe the view, bed type, and amenities..." required></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn-primary">Add Room</button>
+                    <a th:href="@{/rooms}" class="btn-secondary" style="margin-top: 0;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

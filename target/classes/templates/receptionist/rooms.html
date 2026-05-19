@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Statuses | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Front Desk</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/reception/dashboard}">Dashboard</a>
+            <a th:href="@{/reception/checkin}">Check-In Guest</a>
+            <a th:href="@{/reception/checkout}">Check-Out Guest</a>
+            <a th:href="@{/reception/walkin}">Walk-In Booking</a>
+            <a th:href="@{/reception/rooms}" class="active">Room Statuses</a>
+            <a th:href="@{/reception/bookings}">All Bookings</a>
+            <a th:href="@{/reception/payment}">Collect Payment</a>
+            <a th:href="@{/reception/customer-lookup}">Customer Lookup</a>
+            <span class="user-badge" th:text="${receptionist.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <!-- Cleaning Alerts Panel -->
+        <div class="panel" style="border-left: 3px solid var(--warning);" th:if="${!cleaningRooms.isEmpty()}">
+            <h2 style="color: var(--warning);">Housekeeping Actions Needed</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.2rem;">
+                The following rooms are currently under housekeeping cleaning. Once complete, make them available.
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+                <div th:each="cr : ${cleaningRooms}" class="stat-card" style="background: rgba(245, 158, 11, 0.03); margin-bottom: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 th:text="'Room ' + ${cr.roomNumber}">Room 101</h3>
+                        <span class="badge badge-pending">Cleaning</span>
+                    </div>
+                    <form th:action="@{/reception/rooms/available}" method="POST" style="margin-top: 1rem;">
+                        <input type="hidden" name="roomNumber" th:value="${cr.roomNumber}">
+                        <button type="submit" class="btn-primary" style="padding: 0.4rem; font-size: 0.8rem;">Mark Ready</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Inventory Panel -->
+        <div class="panel">
+            <h2>All Room Statuses</h2>
+            <table style="margin-top: 1.5rem;">
+                <thead>
+                    <tr>
+                        <th>Room Number</th>
+                        <th>Type</th>
+                        <th>Floor</th>
+                        <th>Price/Night</th>
+                        <th>Current Status</th>
+                        <th style="text-align: right;">Status Toggle Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${allRooms}">
+                        <td style="font-weight: 600; color: var(--primary);" th:text="${r.roomNumber}">101</td>
+                        <td th:text="${r.type}">SINGLE</td>
+                        <td th:text="${r.floorNumber}">1</td>
+                        <td th:text="'LKR ' + ${r.pricePerNight}">LKR 50.00</td>
+                        <td>
+                            <span class="badge" th:classappend="${r.status == 'AVAILABLE' ? 'badge-success' : (r.status == 'BOOKED' ? 'badge-info' : (r.status == 'CLEANING' ? 'badge-pending' : 'badge-danger'))}" th:text="${r.status}">AVAILABLE</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 0.5rem; justify-content: flex-end;">
+                                <form th:if="${r.status != 'AVAILABLE' && r.status != 'BOOKED'}" th:action="@{/reception/rooms/available}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="roomNumber" th:value="${r.roomNumber}">
+                                    <button type="submit" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; color: var(--success); border-color: var(--success);">Set Available</button>
+                                </form>
+                                <form th:if="${r.status == 'AVAILABLE'}" th:action="@{/reception/rooms/maintenance}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="roomNumber" th:value="${r.roomNumber}">
+                                    <button type="submit" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; width: auto; color: var(--danger); border-color: var(--danger);">Set Maintenance</button>
+                                </form>
+                                <span th:if="${r.status == 'BOOKED'}" style="font-size: 0.8rem; color: var(--text-muted); padding: 0.3rem;">Active Booking</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

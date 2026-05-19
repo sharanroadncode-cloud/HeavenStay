@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Collect Payment | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Front Desk</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/reception/dashboard}">Dashboard</a>
+            <a th:href="@{/reception/checkin}">Check-In Guest</a>
+            <a th:href="@{/reception/checkout}">Check-Out Guest</a>
+            <a th:href="@{/reception/walkin}">Walk-In Booking</a>
+            <a th:href="@{/reception/rooms}">Room Statuses</a>
+            <a th:href="@{/reception/bookings}">All Bookings</a>
+            <a th:href="@{/reception/payment}" class="active">Collect Payment</a>
+            <a th:href="@{/reception/customer-lookup}">Customer Lookup</a>
+            <span class="user-badge" th:text="${receptionist.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <!-- Left Side: Collect Payment Form -->
+            <div>
+                <div class="panel glass-card" style="padding: 2rem;">
+                    <h2>Process Payment</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Select a guest booking, enter details, and record cash/card payment collection.
+                    </p>
+                    
+                    <form th:action="@{/reception/payment}" method="POST">
+                        <div class="form-group">
+                            <label for="bookingId">Select Unpaid Stay</label>
+                            <select id="bookingId" name="bookingId" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required onchange="updateCustomerField()">
+                                <option value="" disabled selected>-- Choose Booking --</option>
+                                <option th:each="ub : ${unpaidBookings}" th:value="${ub.bookingId}" th:data-cust-id="${ub.customerId}" th:text="${ub.bookingId} + ' | Room ' + ${ub.roomNumber} + ' | Total LKR ' + ${ub.totalPrice}"></option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customerId">Customer ID</label>
+                            <input type="text" id="customerId" name="customerId" class="form-control" placeholder="e.g. U002" required readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentMethod">Payment Method</label>
+                            <select id="paymentMethod" name="paymentMethod" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="CASH">CASH</option>
+                                <option value="CARD">CREDIT / DEBIT CARD</option>
+                                <option value="ONLINE">ONLINE TRANSFER</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary" style="margin-top: 1rem;">Record Payment</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Unpaid Bookings Overview -->
+            <div>
+                <div class="panel">
+                    <h2>Pending Reservation Invoices</h2>
+                    <div th:if="${unpaidBookings.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                        Excellent! No unpaid confirmed bookings currently pending payment.
+                    </div>
+                    <table th:if="${!unpaidBookings.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Customer ID</th>
+                                <th>Room Number</th>
+                                <th>Nights</th>
+                                <th>Total Cost</th>
+                                <th>Booking Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ub : ${unpaidBookings}">
+                                <td style="font-weight: 600; color: var(--primary);" th:text="${ub.bookingId}">B001</td>
+                                <td th:text="${ub.customerId}">U002</td>
+                                <td th:text="${ub.roomNumber}">101</td>
+                                <td th:text="${ub.nights}">2</td>
+                                <td th:text="'LKR ' + ${ub.totalPrice}">LKR 100.00</td>
+                                <td>
+                                    <span class="badge badge-success" th:text="${ub.status}">CONFIRMED</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateCustomerField() {
+            var select = document.getElementById("bookingId");
+            var selectedOption = select.options[select.selectedIndex];
+            var custId = selectedOption.getAttribute("data-cust-id");
+            document.getElementById("customerId").value = custId ? custId : "";
+        }
+    </script>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

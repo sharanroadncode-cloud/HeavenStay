@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Details | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Rooms</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="${isAdmin ? '/admin/dashboard' : '/reception/dashboard'}">Dashboard</a>
+            <a th:href="@{/rooms}" class="active">Room Inventory</a>
+            <span class="user-badge" th:text="${user.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 2rem;">
+            <!-- Left Panel: Room Details -->
+            <div>
+                <div class="panel">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h2>Room <span th:text="${room.roomNumber}">101</span> Overview</h2>
+                            <p style="color: var(--text-muted); margin-top: 0.2rem;" th:text="${room.type} + ' Room on Floor ' + ${room.floorNumber}">SINGLE Room on Floor 1</p>
+                        </div>
+                        <span class="badge" th:classappend="${room.status == 'AVAILABLE' ? 'badge-success' : (room.status == 'BOOKED' ? 'badge-info' : (room.status == 'CLEANING' ? 'badge-pending' : 'badge-danger'))}" th:text="${room.status}">AVAILABLE</span>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h3 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Description & Features</h3>
+                        <p th:text="${room.description}">Detailed room description here.</p>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="stat-card" style="margin-bottom: 0; background: rgba(255, 255, 255, 0.02);">
+                            <h3>Price Per Night</h3>
+                            <div class="value" th:text="'LKR ' + ${room.pricePerNight}">LKR 0.00</div>
+                        </div>
+                        <div class="stat-card" style="margin-bottom: 0; background: rgba(255, 255, 255, 0.02);">
+                            <h3>Average Rating</h3>
+                            <div class="value" style="color: var(--primary);" th:text="${avgRating > 0 ? #numbers.formatDecimal(avgRating, 1, 1) + ' ★' : 'No ratings yet'}">5.0 ★</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+                        <a th:if="${isAdmin}" th:href="@{/rooms/edit/{num}(num=${room.roomNumber})}" class="btn-primary" style="width: auto; padding: 0.6rem 1.5rem;">Edit Room Specifications</a>
+                        <a th:href="@{/rooms}" class="btn-secondary" style="width: auto; padding: 0.6rem 1.5rem; margin-top: 0;">Back to List</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Guest Reviews -->
+            <div>
+                <div class="panel">
+                    <h2>Guest Reviews & Comments</h2>
+                    
+                    <div th:if="${reviews.isEmpty()}" style="padding: 2rem 0; text-align: center; color: var(--text-muted);">
+                        No guest reviews registered for this room yet.
+                    </div>
+
+                    <div th:if="${!reviews.isEmpty()}" style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.5rem;">
+                        <div th:each="rev : ${reviews}" style="border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                                <strong style="color: var(--primary);" th:text="${rev.customerId}">Guest ID</strong>
+                                <span style="color: var(--warning);" th:text="${#strings.repeat('★', rev.rating)}">★★★★★</span>
+                            </div>
+                            <p style="font-size: 0.9rem;" th:text="${rev.comment}">Review comment goes here.</p>
+                            <span style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;" th:text="'Reviewed on: ' + ${rev.reviewDate}">2026-05-18</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Walk-In Booking | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Front Desk</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/reception/dashboard}">Dashboard</a>
+            <a th:href="@{/reception/checkin}">Check-In Guest</a>
+            <a th:href="@{/reception/checkout}">Check-Out Guest</a>
+            <a th:href="@{/reception/walkin}" class="active">Walk-In Booking</a>
+            <a th:href="@{/reception/rooms}">Room Statuses</a>
+            <a th:href="@{/reception/bookings}">All Bookings</a>
+            <a th:href="@{/reception/payment}">Collect Payment</a>
+            <a th:href="@{/reception/customer-lookup}">Customer Lookup</a>
+            <span class="user-badge" th:text="${receptionist.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Error Alert -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <!-- Success Alert -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="auth-wrapper" style="padding: 0; min-height: auto;">
+            <div class="auth-card glass-card" style="max-width: 700px; width: 100%;">
+                <div class="brand">
+                    <h1>New Walk-In <span>Reservation</span></h1>
+                    <p>Register an on-the-spot stay, allocate a room, and capture payment.</p>
+                </div>
+
+                <form th:action="@{/reception/walkin}" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;">
+                        <div class="form-group">
+                            <label for="customerId">Select Customer</label>
+                            <select id="customerId" name="customerId" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="" disabled selected>-- Choose Customer --</option>
+                                <option th:each="c : ${customers}" th:value="${c.userId}" th:text="${c.name} + ' (' + ${c.userId} + ')'"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="roomNumber">Select Available Room</label>
+                            <select id="roomNumber" name="roomNumber" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                                <option value="" disabled selected>-- Choose Room --</option>
+                                <option th:each="r : ${availableRooms}" th:value="${r.roomNumber}" th:text="'Room ' + ${r.roomNumber} + ' (' + ${r.type} + ' - $' + ${r.pricePerNight} + '/night)'"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;">
+                        <div class="form-group">
+                            <label for="checkIn">Check-In Date</label>
+                            <input type="date" id="checkIn" name="checkIn" class="form-control" th:value="${today}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkOut">Check-Out Date</label>
+                            <input type="date" id="checkOut" name="checkOut" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select id="paymentMethod" name="paymentMethod" class="form-control" style="background: rgba(15, 16, 22, 0.9);" required>
+                            <option value="CASH">CASH</option>
+                            <option value="CARD">CREDIT/DEBIT CARD</option>
+                            <option value="ONLINE">ONLINE TRANSFER</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn-primary">Process Walk-In & Check-In</button>
+                        <a th:href="@{/reception/dashboard}" class="btn-secondary" style="margin-top: 0;">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
