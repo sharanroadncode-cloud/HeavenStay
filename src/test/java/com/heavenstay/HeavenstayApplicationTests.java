@@ -1,10 +1,10 @@
-package com.roominventory.roominventorypush;
+package com.heavenstay;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RoomInventoryPushApplicationTests {
+class HeavenstayApplicationTests {
 
     @Test
     void contextLoads() {

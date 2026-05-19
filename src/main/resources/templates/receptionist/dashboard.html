@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Receptionist Dashboard | Heaven Stay Hotel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <h1>Heaven<span>Stay</span> Front Desk</h1>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/reception/dashboard}" class="active">Dashboard</a>
+            <a th:href="@{/reception/checkin}">Check-In Guest</a>
+            <a th:href="@{/reception/checkout}">Check-Out Guest</a>
+            <a th:href="@{/reception/walkin}">Walk-In Booking</a>
+            <a th:href="@{/reception/rooms}">Room Statuses</a>
+            <a th:href="@{/reception/bookings}">All Bookings</a>
+            <a th:href="@{/reception/payment}">Collect Payment</a>
+            <a th:href="@{/reception/customer-lookup}">Customer Lookup</a>
+            <span class="user-badge" th:text="${receptionist.name}">Staff Name</span>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Welcoming Section -->
+        <div class="panel" style="margin-bottom: 2rem;">
+            <h2>Front Desk Operations — <span th:text="${today}">2026-05-18</span></h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">
+                Coordinate incoming guests, manage walk-in check-ins, record payment collections, and keep room inventory clean and up-to-date.
+            </p>
+        </div>
+
+        <!-- Room Inventory Overview -->
+        <div class="dashboard-grid">
+            <div class="stat-card" style="background: rgba(16, 185, 129, 0.05);">
+                <h3>Available Rooms</h3>
+                <div class="value" style="color: #34d399;" th:text="${available}">0</div>
+            </div>
+            <div class="stat-card" style="background: rgba(59, 130, 246, 0.05);">
+                <h3>Occupied / Booked</h3>
+                <div class="value" style="color: #60a5fa;" th:text="${booked}">0</div>
+            </div>
+            <div class="stat-card" style="background: rgba(245, 158, 11, 0.05);">
+                <h3>Cleaning in Progress</h3>
+                <div class="value" style="color: #fbbf24;" th:text="${cleaning}">0</div>
+            </div>
+            <div class="stat-card" style="background: rgba(239, 68, 68, 0.05);">
+                <h3>Out of Order</h3>
+                <div class="value" style="color: #f87171;" th:text="${maintenance}">0</div>
+            </div>
+        </div>
+
+        <!-- Front Desk Actions -->
+        <div class="panel">
+            <h2>Front Desk Quick Operations</h2>
+            <div class="actions-grid">
+                <a th:href="@{/reception/checkin}" class="btn-primary">Go to Check-In Guest</a>
+                <a th:href="@{/reception/checkout}" class="btn-primary" style="background: #3b82f6; color: #fff;">Go to Check-Out Guest</a>
+                <a th:href="@{/reception/walkin}" class="btn-secondary">New Walk-In Reservation</a>
+                <a th:href="@{/reception/payment}" class="btn-secondary">Collect Reservation Payment</a>
+            </div>
+        </div>
+
+        <!-- Check-ins and Check-outs for Today split panels -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+            <!-- Today's Check-Ins -->
+            <div class="panel" style="margin-bottom: 0;">
+                <h2>Today's Check-ins</h2>
+                <div th:if="${checkIns.isEmpty()}" style="padding: 1rem 0; color: var(--text-muted);">
+                    No guest check-ins scheduled for today.
+                </div>
+                <table th:if="${!checkIns.isEmpty()}">
+                    <thead>
+                        <tr>
+                            <th>Guest ID</th>
+                            <th>Room</th>
+                            <th>Nights</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${checkIns}">
+                            <td th:text="${c.customerId}">U002</td>
+                            <td th:text="${c.roomNumber}">101</td>
+                            <td th:text="${c.nights}">2</td>
+                            <td>
+                                <form th:action="@{/reception/checkin}" method="POST">
+                                    <input type="hidden" name="bookingId" th:value="${c.bookingId}">
+                                    <button type="submit" class="btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Check-in</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Today's Check-Outs -->
+            <div class="panel" style="margin-bottom: 0;">
+                <h2>Today's Check-outs</h2>
+                <div th:if="${checkOuts.isEmpty()}" style="padding: 1rem 0; color: var(--text-muted);">
+                    No guest check-outs scheduled for today.
+                </div>
+                <table th:if="${!checkOuts.isEmpty()}">
+                    <thead>
+                        <tr>
+                            <th>Guest ID</th>
+                            <th>Room</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="o : ${checkOuts}">
+                            <td th:text="${o.customerId}">U002</td>
+                            <td th:text="${o.roomNumber}">101</td>
+                            <td th:text="'LKR ' + ${o.totalPrice}">LKR 200</td>
+                            <td>
+                                <form th:action="@{/reception/checkout}" method="POST">
+                                    <input type="hidden" name="bookingId" th:value="${o.bookingId}">
+                                    <button type="submit" class="btn-primary" style="background: #3b82f6; color: #fff; padding: 0.3rem 0.6rem; font-size: 0.8rem;">Check-out</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Heaven Stay Hotel. All rights reserved. Designed for elite hospitality.</p>
+    </footer>
+</body>
+</html>
