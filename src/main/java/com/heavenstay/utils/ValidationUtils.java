@@ -11,7 +11,7 @@ public class ValidationUtils {
 
     public static boolean isValidPhone(String phone) {
         if (phone == null || phone.trim().isEmpty()) return false;
-        return phone.trim().matches("\\d{7,15}");
+        return phone.trim().matches("0\\d{9}");
     }
 
     public static boolean isValidPassword(String password) {

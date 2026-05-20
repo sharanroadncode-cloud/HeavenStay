@@ -96,7 +96,7 @@ public class AuthController {
         }
 
         if (!ValidationUtils.isValidPhone(phone)) {
-            ra.addFlashAttribute("error", "Phone must be 7 to 15 digits.");
+            ra.addFlashAttribute("error", "Phone must be 10 digits starting with 0.");
             return "redirect:/register";
         }
 
